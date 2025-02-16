@@ -7,6 +7,7 @@ interface Novel {
 
     title: string;
     phrase: string;
+    point: string;
     description?: string;
 
     created_at?: string;

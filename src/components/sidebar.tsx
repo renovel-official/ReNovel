@@ -1,12 +1,11 @@
 'use client';
 
-import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
-import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import { Zen_Kaku_Gothic_New } from 'next/font/google'
 import { ReactElement, useState, useEffect } from "react";
 import { toast } from "sonner";
+import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import Option from "./ui/option";
-import Link from "next/link";
 
 const zen_kaku_gothic_new = Zen_Kaku_Gothic_New({ weight: "400" });
 
@@ -33,15 +32,15 @@ export default function Sidebar(): ReactElement {
 
                 <div className={`${zen_kaku_gothic_new.className}`}>
                     <Option href={isLogin ? `/dashboard` : `/login`}>
-                        { isLogin ? `Dashboard` : `Login` }
+                        { isLogin ? `ダッシュボード` : `ログイン` }
                     </Option>
 
                     <Option href="/search" className='mt-2'>
-                        Search
+                        検索
                     </Option>
 
                     <Option href="/ranking" className='mt-2'>
-                        Ranking
+                        ランキング
                     </Option>
                 </div>
 
