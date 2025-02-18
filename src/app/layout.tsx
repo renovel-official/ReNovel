@@ -1,7 +1,9 @@
 import "@/styles/globals.css";
 import type { Metadata } from "next";
+import { ReactElement } from "react";
 import { Toaster } from "@/components/ui/sonner";
 
+import authUser from "@/lib/auth";
 import Sidebar from "@/components/sidebar";
 import Header from "@/components/header";
 
@@ -40,18 +42,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>): Promise<ReactElement> {
+  const login: boolean = await authUser();
+
+
   return (
     <html lang="en">
       <body className="bg-white flex flex-col text-black h-screen">
-        <Header />
+        <Header login={login} hasNotifications={false} />
         <div className="flex flex-1">
           <div className="w-1/3 px-3 py-3">
-            <Sidebar />
+            <Sidebar login={login} />
           </div>
           <div className="w-full px-3 py-3">
             {children}

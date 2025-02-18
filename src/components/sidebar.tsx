@@ -7,21 +7,15 @@ import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import Option from "./ui/option";
 
+interface SidebarProps {
+    login: boolean;
+}
+
 const zen_kaku_gothic_new = Zen_Kaku_Gothic_New({ weight: "400" });
 
-export default function Sidebar(): ReactElement {
-    const [isLogin, setIsLogin] = useState<false | string>(false);
+export default function Sidebar({ login }: SidebarProps): ReactElement {
     const [genreOpen, setGenreOpen] = useState<boolean>(true);
-    
-    useEffect(() => {
-        const checkLogin = (async (): Promise<false | string> => {
-            const response: Response = await fetch('/api/auth');
-            
-            return false;
-        });
 
-        toast.success('index');
-    }, []);
 
     return (
         <div className={`bg-gray-50 mt-2 mb-2 ml-2 mr-2 rounded-md px-4 py-4 text-center shadow-md h-full`}>
@@ -31,8 +25,8 @@ export default function Sidebar(): ReactElement {
                 </div>
 
                 <div className={`${zen_kaku_gothic_new.className}`}>
-                    <Option href={isLogin ? `/dashboard` : `/login`}>
-                        { isLogin ? `ダッシュボード` : `ログイン` }
+                    <Option href={login ? `/dashboard` : `/login`}>
+                        { login ? `ダッシュボード` : `ログイン` }
                     </Option>
 
                     <Option href="/search" className='mt-2'>
