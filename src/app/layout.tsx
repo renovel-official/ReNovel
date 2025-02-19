@@ -42,23 +42,29 @@ export const metadata: Metadata = {
   },
 };
 
-
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>): Promise<ReactElement> {
   const login: boolean = await authUser();
 
-
   return (
-    <html lang="en">
-      <body className="bg-white flex flex-col text-black h-screen">
-        <Header login={login} hasNotifications={false} />
-        <div className="flex flex-1">
-          <div className="w-1/3 px-3 py-3">
+    <html lang="ja">
+      <body className="bg-white flex flex-col h-screen pt-16 text-black">
+        {/* ヘッダーを固定 */}
+        <header className="fixed top-0 left-0 w-full z-50">
+          <Header login={login} hasNotifications={false} />
+        </header>
+
+        <div className="flex mt-10">
+          {/* サイドバーを固定し、スクロール可能に */}
+          <div className="fixed top-20 left-0 w-1/4 h-[calc(100vh-5rem)] px-3 py-3 overflow-y-auto overflow-y-hidden">
             <Sidebar login={login} />
           </div>
-          <div className="w-full px-3 py-3">
+
+          {/* メインコンテンツ */}
+          <div className="w-full ml-[25%] px-3 py-3">
             {children}
           </div>
         </div>
+
         <Toaster />
       </body>
     </html>

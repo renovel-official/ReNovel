@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, Ref, useState, useEffect, useRef, FormEvent } from "react";
+import { ReactElement, useState, FormEvent } from "react";
 import { Kaisei_Decol } from "next/font/google";
 import { toast } from "sonner";
 
@@ -14,6 +14,7 @@ import Link from "next/link";
 const kaisei_decol = Kaisei_Decol({ weight: "400" });
 
 export default function RegisterPage(): ReactElement {
+    const [isChecked, setIsChecked] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const registHandler = (async (e: FormEvent<HTMLFormElement>) => {
@@ -90,7 +91,19 @@ export default function RegisterPage(): ReactElement {
                         name="password"
                     />
 
-                    <button className={`mt-3 border rounded px-4 py-2 w-full text-center items-center ${ isLoading ? "bg-gray-300" : "bg-blue-400 hover:bg-blue-500" }`} disabled={ isLoading }>
+                    <div className="mt-2 flex items-center justify-center">
+                        <input type="checkbox" name="check" id="check" onChange={(e) => {setIsChecked(e.target.checked)}}/>
+                        <label htmlFor="check">
+                            <div className="ml-2">
+                                <Link href={`/policy`} className="text-blue-500 hover:text-blue-600 hover:underline">
+                                    利用規約
+                                </Link>
+                                に同意
+                            </div>
+                        </label>
+                    </div>
+
+                    <button className={`mt-3 border rounded px-4 py-2 w-full text-center items-center ${ isLoading || !isChecked ? "bg-gray-300" : "bg-blue-400 hover:bg-blue-500" }`} disabled={ isLoading || !isChecked }>
                         アカウント登録{ isLoading ? <AutorenewIcon /> : <CheckIcon /> }
                     </button>
 

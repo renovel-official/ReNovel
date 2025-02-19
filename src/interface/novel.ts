@@ -1,4 +1,4 @@
-import novelType from "@/types/novelType";
+import novelType from "@/types/novel";
 
 interface Novel {
     id?: number;
