@@ -11,7 +11,7 @@ interface OptionProps {
 export default function Option({ href, className, children, ...props }: OptionProps) {
     return (
         <Link href={href}>
-            <div className={`text-2xl px-2 py-2 rounded-md hover:bg-gray-200 ${className}`} { ...props } >
+            <div className={`text-[2.5vh] px-2 py-2 rounded-md text-center hover:bg-gray-200 ${className}`} { ...props } >
                 { children }
             </div>
         </Link>

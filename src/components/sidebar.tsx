@@ -1,10 +1,11 @@
 'use client';
 
 import { Zen_Kaku_Gothic_New } from 'next/font/google'
-import { ReactElement, useState, useEffect } from "react";
-import { toast } from "sonner";
+import { ReactElement, useState } from "react";
 import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Option from "./ui/option";
 
 interface SidebarProps {
@@ -18,9 +19,9 @@ export default function Sidebar({ login }: SidebarProps): ReactElement {
 
 
     return (
-        <div className={`bg-gray-50 mt-2 mb-2 ml-2 mr-2 rounded-md px-4 py-4 text-center shadow-md h-full`}>
+        <div className={`bg-gray-50 mt-2 mb-2 ml- mr-2 rounded-md px-4 py-4 shadow-md h-full`}>
             <div className={`mt-1`}>
-                <div className="text-gray-500">
+                <div className="text-gray-500 text-center">
                     全般
                 </div>
 
@@ -39,11 +40,11 @@ export default function Sidebar({ login }: SidebarProps): ReactElement {
                 </div>
 
                 <div 
-                    className='text-gray-500 mt-2 items-center'
+                    className='text-gray-500 mt-2 items-center text-center'
                     title={genreOpen ? 'クリックで閉じる' : 'クリックで開く'}
                     onClick={() => { setGenreOpen(!genreOpen); }} >
+                    { genreOpen ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon /> }
                     ジャンルから探す
-                    {genreOpen ? <CloseOutlinedIcon /> : <ArrowDownwardOutlinedIcon />}
                 </div>
                 
                 <div className={`${zen_kaku_gothic_new.className} ${genreOpen ? '' : 'hidden'}`}>

@@ -7,6 +7,7 @@ import authUser from "@/lib/auth";
 import Sidebar from "@/components/sidebar";
 import Header from "@/components/header";
 
+
 export const metadata: Metadata = {
   title: {
     default: "ReNovel | 小説家の卵を発掘する小説投稿サイト",
@@ -55,13 +56,13 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
         <div className="flex mt-10">
           {/* サイドバーを固定し、スクロール可能に */}
-          <div className="fixed top-20 left-0 w-1/4 h-[calc(100vh-5rem)] px-3 py-3 overflow-y-auto overflow-y-hidden">
+          <div className="fixed top-20 left-0 w-1/5 h-[calc(100vh-5rem)] px-3 py-3 overflow-y-auto overflow-y-hidden">
             <Sidebar login={login} />
           </div>
 
           {/* メインコンテンツ */}
-          <div className="w-full ml-[25%] px-3 py-3">
-            {children}
+          <div className="w-full ml-[20%] px-3 py-3">
+            { children }
           </div>
         </div>
 
