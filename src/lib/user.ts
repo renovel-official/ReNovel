@@ -25,7 +25,27 @@ async function getUserFromSlug(slug: string): Promise<User | undefined> {
     return data ?? undefined;
 }
 
+async function updateUserFromEmail(email: string, data: User): Promise<boolean> {
+    const { error } = await supabaseClient
+        .from('accounts')
+        .update(data)
+        .eq('email', email);
+
+    return error ? true : false;
+}
+
+async function updateUserFromSlug(slug: string, data: User): Promise<boolean> {
+    const { error } = await supabaseClient
+        .from('accounts')
+        .update(data)
+        .eq('slug', slug);
+
+    return error ? true : false;
+}
+
 export {
     getUserFromEmail,
-    getUserFromSlug
+    getUserFromSlug,
+    updateUserFromEmail,
+    updateUserFromSlug
 };
