@@ -1,19 +1,42 @@
 'use client';
 
-import { ReactElement, useState, useEffect } from "react";
+import { ReactElement, useState, useEffect, FormEvent } from "react";
 import { Kaisei_Decol } from "next/font/google";
 import { toast } from "sonner";
 
 import ApiResponse from "@/interface/response";
 import ButtonLink from "@/components/ui/buttonLink";
+import UpdateIcon from '@mui/icons-material/Update';
+import SyncIcon from '@mui/icons-material/Sync';
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
+import Link from "next/link";
 
 const kaisei_decol = Kaisei_Decol({ weight: "400" });
 
 export default function Dashboard(): ReactElement {
     const [username, setUsername] = useState<string>("unknown");
     const [userslug, setUserslug] = useState<string>("unknown");
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const updateUserData = (async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsLoading(true);
+        toast.info('ユーザー情報をアップデートします');
+
+        const formData: FormData = new FormData(e.currentTarget);
+        const data = {
+            name: formData.get('name') as string,
+            slug: formData.get('slug') as string,
+            password: formData.get('password') as string,
+        };
+        
+        const response: Response = await fetch('/api/v2/user')
+        
+        toast.success('アップデートに成功しました');
+        setIsLoading(false);
+    });
+
 
     useEffect(() => {
         const getUserinfo = (async () => {
@@ -50,34 +73,47 @@ export default function Dashboard(): ReactElement {
                     ユーザー情報変更
                 </div>
 
-                <Input
-                    placeholder="name"
-                    value={username}
-                    name="name"
-                    id="name"
-                />
+                <form onSubmit={updateUserData}>
 
-                <Input 
-                    placeholder="slug"
-                    name="slug"
-                    id="slug"
-                />
+                    <Input
+                        placeholder="name"
+                        value={username}
+                        name="name"
+                        id="name"
+                    />
 
-                <Input 
-                    type="password"
-                    placeholder="password"
-                    name="password"
-                    id="password"
-                />
+                    <Input 
+                        placeholder="slug"
+                        value={userslug}
+                        name="slug"
+                        id="slug"
+                    />
 
-                <div className="mt-5 text-center">
-                    <Button className="w-full hover:bg-blue-100">
-                        変更
-                    </Button>
-                </div>
+                    <Input 
+                        type="password"
+                        placeholder="password"
+                        name="password"
+                        id="password"
+                    />
 
-                <div className="mt-3 text-center text-gray-500">
-                    詳細はアカウント設定から
+                    <div className="mt-5 text-center">
+                        <Button className={`w-full ${isLoading ? `bg-gray-100` : `hover:bg-blue-100`}`} disbled={isLoading}>
+                            変更 { isLoading ? <UpdateIcon /> : <SyncIcon /> }
+                        </Button>
+                    </div>
+
+                </form>
+
+                
+
+                <div className="mt-3 text-center text-gray-500 items-center">
+                    詳細は
+                    
+                    <Link href={`/register`} className="underline hover:text-blue-500">
+                        アカウント設定
+                    </Link>
+                    
+                    から
                 </div>
                 
             </div>

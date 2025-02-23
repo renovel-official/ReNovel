@@ -1,6 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseClient = createClient(
+const supabaseClient: SupabaseClient = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
     process.env.NEXT_PUBLIC_ANON_KEY ?? ""
 );

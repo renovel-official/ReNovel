@@ -2,14 +2,15 @@
 
 import { getUserFromEmail } from "@/lib/user";
 
-import authUser from "@/lib/auth";
 import apiResponse from "@/lib/response";
+import authUser from "@/lib/auth";
+import User from "@/interface/user";
 
 export async function GET(): Promise<Response> {
     const authResult: string | false = await authUser();
 
     if (authResult) {
-        const user: any | undefined = await getUserFromEmail(authResult);
+        const user: User | undefined = await getUserFromEmail(authResult);
 
         if (user) {
             delete user.password;

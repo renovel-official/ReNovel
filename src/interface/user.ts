@@ -5,7 +5,7 @@ interface User {
     slug: string;
     name: string;
     email: string;
-    password: string;
+    password?: string;
     description: string;
     google_client_id?: string;
     created_at?: string;
