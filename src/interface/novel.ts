@@ -8,8 +8,8 @@ interface Novel {
 
     title: string;
     phrase: string;
-    point: string;
-    description?: string;
+    point: number;
+    description: string;
     genre: NovelGenre;
     tags?: string[];
 

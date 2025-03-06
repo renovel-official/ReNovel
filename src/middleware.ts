@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimiter } from "./middleware/rateLimit";
 import authUser from "./lib/auth";
-import { cookies } from "next/headers";
 
 export async function middleware(req: NextRequest) {
     const auth: string | false = await authUser();
@@ -11,6 +11,9 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL("/login", req.url));
     } else if ((path.startsWith("/login") || path.startsWith("/register")) && auth) {
         return NextResponse.redirect(new URL("/dashboard", req.url));
+    } else if (path.startsWith("/api")) {
+        const rateLimitResponse = rateLimiter(req);
+        if (rateLimitResponse) return rateLimitResponse;
     }
 
     return NextResponse.next();
@@ -18,5 +21,5 @@ export async function middleware(req: NextRequest) {
 
 // dashboard へのアクセスを制限
 export const config = {
-    matcher: ["/dashboard/:path*", "/login", "/register"],
+    matcher: ["/dashboard/:path*", "/login", "/register", "/api/:path*"]
 };

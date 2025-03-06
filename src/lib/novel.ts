@@ -1,5 +1,7 @@
 'use server';
 
+import { NovelGenreList } from "@/types/genre";
+
 import supabaseClient from "@/lib/supabase";
 import Novel from "@/interface/novel";
 import NovelGenre from "@/types/genre";
@@ -17,7 +19,7 @@ interface NovelResult {
     authors: NovelAuthor[];
 }
 
-const getNovelsAll = (async (): Promise<NovelResult[] | null> => {
+const getNovelsAll = (async (): Promise<NovelResult[]> => {
     const results: NovelResult[] = [];
     const { data, error } = await supabaseClient
         .from('novels')
@@ -34,7 +36,7 @@ const getNovelsAll = (async (): Promise<NovelResult[] | null> => {
     return results;
 });
 
-const getNovelFromId = (async (workId: string): Promise<NovelResult | null> => {
+const getNovelFromId = (async (workId: string): Promise<NovelResult> => {
     const novelData = await (async (workId) => {
         const { data, error } = await supabaseClient
             .from('novels')
@@ -67,7 +69,7 @@ const getNovelFromId = (async (workId: string): Promise<NovelResult | null> => {
     return null;
 });
 
-const getNovelsFromAuthor = (async (email: string): Promise<NovelResult[] | null> => {
+const getNovelsFromAuthor = (async (email: string): Promise<NovelResult[]> => {
     const authorNovelIds = await (async (email: string): Promise<NovelAuthor[] | null> => {
         const { data, error } = await supabaseClient
             .from('author_novels')
@@ -88,13 +90,13 @@ const getNovelsFromAuthor = (async (email: string): Promise<NovelResult[] | null
     return null;
 });
 
-const getNovelsFromGenre = (async (genre: NovelGenre): Promise<NovelResult[] | null> => {
+const getNovelsFromGenre = (async (genre: NovelGenre): Promise<NovelResult[]> => {
     const novels = await getNovelsAll();
 
     return novels?.filter((novel: NovelResult) => novel.work.genre === genre) ?? [];
 });
 
-const getNovelsFromTags = (async (tags: string[]): Promise<NovelResult[] | null> => {
+const getNovelsFromTags = (async (tags: string[]): Promise<NovelResult[]> => {
     const novels = await getNovelsAll();
     const results: NovelResult[] = [];
 
@@ -109,14 +111,30 @@ const getNovelsFromTags = (async (tags: string[]): Promise<NovelResult[] | null>
     return results;
 });
 
-const searchNovels = (async (query: string): Promise<NovelResult[] | null> => {
-    
-    return null;
+const getNovelsFromQuery = (async (queryText: string): Promise<NovelResult[]> => {
+    const queris: string[] = queryText.split(' ');
+    const novels = await getNovelsAll();
+    const results: NovelResult[] = [];
+
+    for (const query of queris) {
+        for (const novel of novels ?? []) {
+            if (novel.work.title.includes(query) || novel.work.description.includes(query)) {
+                results.push(novel);
+            }
+            results.push(...(await getNovelsFromTags([query])));
+            if (NovelGenreList.includes(query as NovelGenre)) results.push(...(await getNovelsFromGenre(query as NovelGenre)));
+            results.push(...(await getNovelsFromAuthor(query)));
+        };
+    };
+
+    return results.sort((a: NovelResult, b: NovelResult) => b.work.point - a.work.point);
 });
 
 export {
     getNovelsAll,
     getNovelFromId,
+    getNovelsFromTags,
+    getNovelsFromGenre,
+    getNovelsFromQuery,
     getNovelsFromAuthor,
-    getNovelsFromGenre
 };

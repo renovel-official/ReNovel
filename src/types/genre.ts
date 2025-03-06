@@ -12,5 +12,21 @@ type NovelGenre =
   | "history"        // 歴史
   | "othor";         // その他
 
+const NovelGenreList: NovelGenre[] = [
+  "action",
+  "fantasy",
+  "love",
+  "fantasy-love",
+  "sf",
+  "horror",
+  "mystery",
+  "adventure",
+  "comedy",
+  "thriller",
+  "history",
+  "othor",
+];
+
 
 export default NovelGenre;
+export { NovelGenreList };
