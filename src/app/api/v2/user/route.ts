@@ -2,10 +2,12 @@
 
 import { getUserFromEmail, getUserFromSlug, updateUserFromEmail } from "@/lib/user";
 
+import { hashPassword } from "@/lib/password";
 import apiResponse from "@/lib/response";
 import authUser from "@/lib/auth";
 
 import User from "@/interface/user";
+
 const userKeys: string[] = ["name", "email", "description", "password", "role"];
 
 export async function GET(req: Request): Promise<Response> {
@@ -40,11 +42,40 @@ export async function PUT(req: Request): Promise<Response> {
         const target: string = data.target ?? authResult;
         const user: User | undefined = await getUserFromEmail(target);
 
-        if (target == authResult) {
+        if (user) {
+            if (target == authResult && user) {
+                userKeys.forEach(async (key: string) => {
+                    if (data[key] && key != "role" && key != "id" && key != "password") {
+                        user[key as keyof User] = data[key];
+                    } else if (key == "password" && data[key]) {
+                        if (data[key].length >= 4) {
+                            user["password"] = await hashPassword(data[key]);
+                        }
+                    }
+                });
+            } else {
+                if (user?.role == "admin") {
+                    userKeys.forEach(async (key: string) => {
+                        if (data[key] && key != "id" && key != "password") {
+                            user[key as keyof User] = data[key];
+                        } else if (key == "password" && data[key]) {
+                            if (data[key].length >= 4) {
+                                user["password"] = await hashPassword(data[key]);
+                            }
+                        }
+                    });
+                }
+            }
 
-        } else {
-            if (user?.role == "admin") {
-                
+            const result: boolean = await updateUserFromEmail(user.email, user);
+            console.log(result);
+
+            if (result) {
+                return apiResponse(
+                    true,
+                    'Success to update user',
+                    user
+                );
             }
         }
     }
@@ -52,5 +83,12 @@ export async function PUT(req: Request): Promise<Response> {
     return apiResponse(
         false,
         'Failed to update user'
+    );
+}
+
+export async function DELETE(req: Request): Promise<Response> {
+    return apiResponse(
+        false,
+        'Failed to delete user',
     );
 }

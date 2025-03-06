@@ -31,7 +31,20 @@ export default function Dashboard(): ReactElement {
             password: formData.get('password') as string,
         };
         
-        const response: Response = await fetch('/api/v2/user')
+        const response: Response = await fetch('/api/v2/user', {
+            method: 'PUT',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const result: ApiResponse = await response.json();
+
+        if (!result.success) {
+            toast.error('アップデートに失敗しました');
+            setIsLoading(false);
+            return;
+        }
         
         toast.success('アップデートに成功しました');
         setIsLoading(false);
@@ -94,6 +107,7 @@ export default function Dashboard(): ReactElement {
                         placeholder="password"
                         name="password"
                         id="password"
+                        required={false}
                     />
 
                     <div className="mt-5 text-center">
@@ -109,7 +123,7 @@ export default function Dashboard(): ReactElement {
                 <div className="mt-3 text-center text-gray-500 items-center">
                     詳細は
                     
-                    <Link href={`/register`} className="underline hover:text-blue-500">
+                    <Link href={`/dashboard/account`} className="underline hover:text-blue-500">
                         アカウント設定
                     </Link>
                     
@@ -130,11 +144,11 @@ export default function Dashboard(): ReactElement {
                             小説
                         </div>
 
-                        <ButtonLink className="mt-3 w-full hover:bg-gray-100" href="/dashboard/novels/new">
+                        <ButtonLink className="mt-3 w-full hover:bg-gray-100" href="/dashboard/works/new">
                             新規作品を作成
                         </ButtonLink>
 
-                        <ButtonLink className="mt-3 w-full hover:bg-gray-100" href="/dashboard/novels">
+                        <ButtonLink className="mt-3 w-full hover:bg-gray-100" href="/dashboard/works">
                             作品を管理
                         </ButtonLink>
 

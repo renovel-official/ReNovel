@@ -9,11 +9,12 @@ interface InputProps {
     value?: string;
     name?: string;
     id?: string;
+    required?: boolean;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className = "", type = "text", placeholder = "", value = "", name = "", id = "", onChange, ...props }, ref): ReactElement<HTMLInputElement> => {
+  ({ className = "", type = "text", placeholder = "", value = "", name = "", id = "", required=true, onChange, ...props }, ref): ReactElement<HTMLInputElement> => {
     const [v, setValue] = useState<string>(value);
 
     // 外部の value が変わったら内部状態を更新
@@ -26,7 +27,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             type={type}
             className={`mt-3 border rounded px-4 py-2 w-full ${className}`}
             placeholder={placeholder}
-            required
+            required={required}
             name={name}
             ref={ref}
             id={id}

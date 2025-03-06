@@ -19,8 +19,9 @@ export default function Sidebar({ login }: SidebarProps): ReactElement {
 
 
     return (
-        <div className={`bg-gray-50 mt-2 mb-2 ml- mr-2 rounded-md px-4 py-4 shadow-md h-full`}>
-            <div className={`mt-1`}>
+        <div className={`bg-gray-50 mr-2 rounded-md px-4 py-4 shadow h-screen`}>
+            <div className="h-10"></div>
+            <div className={``}>
                 <div className="text-gray-500 text-center">
                     全般
                 </div>

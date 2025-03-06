@@ -1,3 +1,3 @@
-type novelType = 'short' | 'long';
+type NovelType = 'short' | 'long';
 
-export default novelType;
+export default NovelType;

@@ -31,7 +31,7 @@ async function updateUserFromEmail(email: string, data: User): Promise<boolean> 
         .update(data)
         .eq('email', email);
 
-    return error ? true : false;
+    return error ? false : true;
 }
 
 async function updateUserFromSlug(slug: string, data: User): Promise<boolean> {
@@ -40,7 +40,7 @@ async function updateUserFromSlug(slug: string, data: User): Promise<boolean> {
         .update(data)
         .eq('slug', slug);
 
-    return error ? true : false;
+    return error ? false : true;
 }
 
 export {

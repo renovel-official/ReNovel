@@ -1,17 +1,22 @@
-import novelType from "@/types/novel";
+import NovelGenre from "@/types/genre";
+import NovelType from "@/types/novel";
 
 interface Novel {
     id?: number;
     slug?: string;
-    type?: novelType;
+    type?: NovelType;
 
     title: string;
     phrase: string;
     point: string;
     description?: string;
+    genre: NovelGenre;
+    tags?: string[];
 
     created_at?: string;
     updated_at?: string;
 }
+
+
 
 export default Novel;
