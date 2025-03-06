@@ -1,6 +1,6 @@
 'use server';
 
-import { getNovelAll, getNovelFromId, getNovelFromAuthor, getNovelFromGenre } from "@/lib/novel";
+import { getNovelsAll, getNovelFromId, getNovelsFromAuthor, getNovelsFromGenre, getNovelsFromTags } from "@/lib/novel";
 
 import supabaseClient from "@/lib/supabase";
 import apiResponse from "@/lib/response";
@@ -32,13 +32,13 @@ export async function GET(req: Request): Promise<Response> {
     if (workId) {
         novels.push(await getNovelFromId(workId) as NovelResult);
     } else if (authorEmail) {
-        novels.push(... await getNovelFromAuthor(authorEmail) as NovelResult[]);
+        novels.push(... await getNovelsFromAuthor(authorEmail) as NovelResult[]);
     } else if (genre) {
-        novels.push(... await getNovelFromGenre(genre) as NovelResult[]);
+        novels.push(... await getNovelsFromGenre(genre) as NovelResult[]);
     } else if (tags) {
-        
+        novels.push(... await getNovelsFromTags(tags) as NovelResult[]);
     } else {
-        novels.push(... await getNovelAll() as NovelResult[]);
+        novels.push(... await getNovelsAll() as NovelResult[]);
     }
 
     return apiResponse(
