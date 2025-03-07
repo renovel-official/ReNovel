@@ -14,6 +14,8 @@ export const metadata: Metadata = {
     template: "%s / ReNovel"
   },
   description: "ReNovelは、新しい才能を発掘する小説投稿サイトです。あなたの物語を世界に届けましょう。",
+  metadataBase: new URL("https://renovel.jp"),
+
   openGraph: {
     title: {
       default: "ReNovel | 小説家の卵を発掘する小説投稿サイト",
@@ -37,6 +39,7 @@ export const metadata: Metadata = {
       }
     ],
   },
+  
   twitter: {
     card: "summary_large_image",
     site: "@ReNovel", // 公式Twitterアカウントがあれば変更
@@ -47,6 +50,15 @@ export const metadata: Metadata = {
     description: "ReNovelは、新しい才能を発掘する小説投稿サイトです。あなたの物語を世界に届けましょう。",
     images: ["https://renovel.jp/renovel_ogp.png"],
   },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+
+  icons: {
+    icon: "/favicon.ico"
+  }
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>): Promise<ReactElement> {
@@ -67,8 +79,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           </div>
 
           {/* メインコンテンツ */}
-          <div className="w-full ml-[20%] px-3 py-3 mt-10">
-            { children }
+          <div className="w-full ml-[17%] px-3 py-3 mt-10 mr-3">
+            {children}
           </div>
         </div>
 

@@ -17,6 +17,22 @@ interface Novel {
     updated_at?: string;
 }
 
+interface NovelAuthor {
+    id?: number;
+    email: string;
+    novel_id: string;
+    is_admin: boolean;
+    created_at: string;
+}
+
+interface NovelResult {
+    work: Novel;
+    authors: NovelAuthor[];
+    view?: number;
+    follower?: number;
+}
 
 
 export default Novel;
+
+export type { NovelAuthor, NovelResult };

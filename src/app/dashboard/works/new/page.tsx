@@ -30,7 +30,7 @@ export default function CreateNovelPage(): ReactElement {
         const genre: NovelGenre = formData.get("genre") as NovelGenre;
         const tags: string = formData.get("tags") as string;
 
-        const response: Response = await fetch("/api/v2/works", {
+        const response: Response = await fetch("/api/v3/works", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -41,20 +41,24 @@ export default function CreateNovelPage(): ReactElement {
                 description,
                 type: novelType,
                 genre,
-                tags
+                tags: tags.split(" ")
             })
         });
         const data: ApiResponse = await response.json();
 
         if (data.success) {
             toast.success("小説を作成しました");
-            setIsLoading(false);
             window.location.href = `/dashboard/works/${data.body.slug}`;
+        } else {
+            toast.error("小説の作成に失敗しました");
         }
+        setIsLoading(false);
     });
 
     return (
         <>
+        <title>新規小説作成 / ReNovel</title>
+
         <div className={`mt-3 text-3xl text-center ${kaisei_decol.className}`}>
             小説作成
         </div>
@@ -75,7 +79,6 @@ export default function CreateNovelPage(): ReactElement {
                 className="w-full border rounded mt-3 px-3 py-2 h-[30vh]"
                 name="description"
                 placeholder="説明"
-                required
             />
 
             <select name="novelType" className="mt-3 border rounded px-3 py-2 w-full">
@@ -102,6 +105,7 @@ export default function CreateNovelPage(): ReactElement {
                 type="text"
                 name="tags"
                 placeholder="タグ 半角スペースで区切ります ハッシュタグはいりません"
+                required={false}
             />
 
             <Button

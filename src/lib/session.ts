@@ -2,7 +2,7 @@
 
 import Session from "@/interface/session";
 import supabaseClient from "./supabase";
-import { generateToken } from "./token";
+import { generateToken } from "./random";
 
 async function getSessionFromToken(token: string): Promise<Session | undefined> {
     const { data } = await supabaseClient

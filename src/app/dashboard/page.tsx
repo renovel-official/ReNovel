@@ -10,6 +10,7 @@ import UpdateIcon from '@mui/icons-material/Update';
 import SyncIcon from '@mui/icons-material/Sync';
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
+import Head from "next/head";
 import Link from "next/link";
 
 const kaisei_decol = Kaisei_Decol({ weight: "400" });
@@ -52,6 +53,7 @@ export default function Dashboard(): ReactElement {
 
 
     useEffect(() => {
+        
         const getUserinfo = (async () => {
             const response: Response = await fetch('/api/v1/auth');
             try {
@@ -76,6 +78,8 @@ export default function Dashboard(): ReactElement {
     
     return (
         <>
+        <title>Dashboard / ReNovel</title>
+
         <div className={`mt-3 text-3xl text-center ${kaisei_decol.className}`}>
             ダッシュボード
         </div>
