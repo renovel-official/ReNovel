@@ -12,7 +12,7 @@ import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import Link from "next/link";
 
-const kaisei_decol = Kaisei_Decol({ weight: "400" });
+const kaisei_decol = Kaisei_Decol({ weight: "400", subsets: ["latin"] });
 
 export default function Dashboard(): ReactElement {
     const [username, setUsername] = useState<string>("unknown");

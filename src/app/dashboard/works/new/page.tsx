@@ -13,7 +13,7 @@ import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 
 
-const kaisei_decol = Kaisei_Decol({ weight: "400" });
+const kaisei_decol = Kaisei_Decol({ weight: "400", subsets: ["latin"] });
 
 export default function CreateNovelPage(): ReactElement {
     const [isLoading, setIsLoading] = useState<boolean>(false);

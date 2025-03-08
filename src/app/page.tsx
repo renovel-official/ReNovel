@@ -6,7 +6,7 @@ import Infomation from "@/interface/infomation";
 import Novel from "@/interface/novel";
 import Link from "next/link";
 
-const kaisei_decol = Kaisei_Decol({ weight: "400" });
+const kaisei_decol = Kaisei_Decol({ weight: "400", subsets: ["latin"] });
 
 export default function Home() {
   const [infomations, setInfomations] = useState<Infomation[]>([

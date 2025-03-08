@@ -18,8 +18,8 @@ import NovelType from "@/types/novel";
 import Input from "@/components/ui/input";
 import Link from "next/link";
 
-const kaisei_decol = Kaisei_Decol({ weight: "400" });
-const noto_serif = Noto_Serif_JP();
+const kaisei_decol = Kaisei_Decol({ weight: "400", subsets: ["latin"] });
+const noto_serif = Noto_Serif_JP({ subsets: ["latin"] });
 
 export default function Novels(): ReactElement {
     const { work_id } = useParams();

@@ -11,7 +11,7 @@ import ButtonLink from "@/components/ui/buttonLink";
 import Novel, { NovelResult } from "@/interface/novel";
 import Link from "next/link";
 
-const kaisei_decol = Kaisei_Decol({ weight: "400" });
+const kaisei_decol = Kaisei_Decol({ weight: "400", subsets: ["latin"] });
 
 export default function Novels(): ReactElement {
     const [isLoading, setIsLoading] = useState<boolean>(true);
