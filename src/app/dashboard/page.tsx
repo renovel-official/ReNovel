@@ -10,7 +10,6 @@ import UpdateIcon from '@mui/icons-material/Update';
 import SyncIcon from '@mui/icons-material/Sync';
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
-import Head from "next/head";
 import Link from "next/link";
 
 const kaisei_decol = Kaisei_Decol({ weight: "400" });
