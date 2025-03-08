@@ -14,7 +14,7 @@ import Link from "next/link";
 const kaisei_decol = Kaisei_Decol({ weight: "400" });
 
 export default function Novels(): ReactElement {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [novels, setNovels] = useState<NovelResult[]>([]);
     
     useEffect(() => {
@@ -25,7 +25,7 @@ export default function Novels(): ReactElement {
 
             if (data.success) {
                 const novels = (data.body as NovelResult[]).sort((a, b) => (b.view ?? 0) - (a.view ?? 0))
-                setNovels(data.body);
+                setNovels(novels);
             } else {
                 toast.error("小説の取得に失敗しました");
             }
@@ -52,8 +52,13 @@ export default function Novels(): ReactElement {
         </div>
 
         <div className="flex mt-3">
-            <div className="w-1/5"></div>
-            <div className="w-full">
+            <div className="w-[5%]"></div>
+            
+            <div className={`w-full text-center items-center place-content-center justify-center h-[50vh] ${isLoading ? "" : "hidden"}`}>
+                <div className="spinner"></div>
+            </div>
+
+            <div className={`w-full ${isLoading ? "hidden" : ""}`}>
                 {novels.map((novel, index) => {
                     const work: Novel = novel.work;
 
@@ -103,7 +108,7 @@ export default function Novels(): ReactElement {
                     );
                 })}
             </div>
-            <div className="w-1/5"></div>
+            <div className="w-[5%]"></div>
         </div>
         
 

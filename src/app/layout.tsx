@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { ReactElement } from "react";
 import { Toaster } from "@/components/ui/sonner";
+import { headers } from "next/headers";
 
 import authUser from "@/lib/auth";
 import Sidebar from "@/components/sidebar";
@@ -63,6 +64,9 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>): Promise<ReactElement> {
   const login: string | false = await authUser();
+  const userAgent = (await headers()).get('User-Agent') ?? "";
+
+  const isIPad = /iPad|Macintosh/i.test(userAgent) // && "ontouchend" in globalThis;
 
   return (
     <html lang="ja">
@@ -74,12 +78,12 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
         <div className="flex">
           {/* サイドバーを固定し、スクロール可能に */}
-          <div className="fixed left-0 w-1/6 h-screen overflow-y-auto overflow-y-hidden">
+          <div className={`fixed left-0 w-1/${isIPad ? "5" : "6"} h-screen overflow-y-auto overflow-y-hidden`}>
             <Sidebar login={login ? true : false} />
           </div>
 
           {/* メインコンテンツ */}
-          <div className="w-full ml-[17%] px-3 py-3 mt-10 mr-3">
+          <div className={`w-full ${isIPad ? "ml-[20%]" : "ml-[17%]"} px-3 py-3 mt-10 mr-3`}>
             {children}
           </div>
         </div>

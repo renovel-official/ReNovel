@@ -4,11 +4,13 @@ import { getNovelsFromQuery, getNovelsAll, getNovelFromId, getNovelsFromAuthor, 
 import { generateUniqueNumber } from "@/lib/random";
 import { getFormattedDate } from "@/lib/date";
 import { NovelResult } from "@/interface/novel";
+import { getEpisodesFromNovel } from "@/lib/episode";
 
 import supabaseClient from "@/lib/supabase";
 import apiResponse from "@/lib/response";
 import NovelGenre, { NovelGenreList } from "@/types/genre";
 import authUser from "@/lib/auth";
+import Episode from "@/interface/episode";
 
 export async function GET(req: Request): Promise<Response> {
     const login = await authUser();

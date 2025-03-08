@@ -5,7 +5,7 @@ interface Episode {
     title: string;
     text: string;
     good: number;
-    view: number;
+    view: string[];
     created_at: string;
     updated_at: string;
 }

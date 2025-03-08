@@ -1,5 +1,6 @@
 import NovelGenre from "@/types/genre";
 import NovelType from "@/types/novel";
+import Episode from "./episode";
 
 interface Novel {
     id?: number;
@@ -30,6 +31,9 @@ interface NovelResult {
     authors: NovelAuthor[];
     view?: number;
     follower?: number;
+    episodes?: Episode[];
+    isAuthor?: boolean;
+    isAdmin?: boolean;
 }
 
 

@@ -1,111 +1,241 @@
 'use client';
 
-import { ReactElement, useState, useEffect } from "react";
-import { Activity, UserRoundCheck } from "lucide-react";
-import { Kaisei_Decol } from "next/font/google";
+import { ReactElement, useState, useEffect, FormEvent } from "react";
+import { Activity, UserRoundCheck, Eye } from "lucide-react";
+import { Kaisei_Decol, Noto_Serif_JP } from "next/font/google";
+import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
-import OutboundIcon from '@mui/icons-material/Outbound';
+import Novel, { NovelAuthor, NovelResult } from "@/interface/novel";
+import SportsScoreIcon from '@mui/icons-material/SportsScore';
+import SettingsIcon from '@mui/icons-material/Settings';
 import ApiResponse from "@/interface/response";
+import PersonIcon from '@mui/icons-material/Person';
 import ButtonLink from "@/components/ui/buttonLink";
-import Novel, { NovelResult } from "@/interface/novel";
+import NovelGenre from "@/types/genre";
+import Episode from "@/interface/episode";
+import NovelType from "@/types/novel";
+import Input from "@/components/ui/input";
 import Link from "next/link";
 
 const kaisei_decol = Kaisei_Decol({ weight: "400" });
+const noto_serif = Noto_Serif_JP();
 
 export default function Novels(): ReactElement {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [novels, setNovels] = useState<NovelResult[]>([]);
-    
+    const { work_id } = useParams();
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [novel, setNovel] = useState<NovelResult>();
+    const [isAdmin, setAdmin] = useState<boolean>(false);
+    const [watchOnMouse, setWatchOnMouse] = useState<boolean>(false);
+    const [followOnMouse, setFollowOnMouse] = useState<boolean>(false);
+    const [pointOnMouse, setPointOnMouse] = useState<boolean>(false);
+    const [selectedGenre, setSelectedGenre] = useState<NovelGenre>("action");
+    const [novelType, setNovelType] = useState<NovelType>("long");
+
+
     useEffect(() => {
-        const fetchNovels = async () => {
+        const fetchNovel = async () => {
             setIsLoading(true);
-            const response: Response = await fetch("/api/v3/works?author=me");
+            const response: Response = await fetch(`/api/v3/works/${work_id}`);
             const data: ApiResponse = await response.json();
 
             if (data.success) {
-                const novels = (data.body as NovelResult[]).sort((a, b) => (b.view ?? 0) - (a.view ?? 0))
-                setNovels(data.body);
+                const novelResult: NovelResult = data.body;
+                if (!novelResult.isAuthor) window.location.href = `/dashboard/works/`;
+                setAdmin(novelResult.isAdmin ?? false);
+                setNovel(data.body);
+                setSelectedGenre(novelResult.work.genre);
+                setNovelType(novelResult.work.type ?? "long");
             } else {
                 toast.error("小説の取得に失敗しました");
+                window.location.href = `/dashboard/works/`;
             }
             setIsLoading(false);
         };
-        
-        fetchNovels();
+
+        fetchNovel();
     }, []);
+
+    const updateNovel = (async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        const formData: FormData = new FormData(e.currentTarget);
+        const title: string = formData.get("title") as string;
+        const phrase: string = formData.get("phrase") as string;
+        const description: string = formData.get("description") as string;
+        const genre: NovelGenre = formData.get("genre") as NovelGenre;
+        const tags: string = formData.get("tags") as string;
+
+        const response: Response = await fetch(`/api/v3/works/${work_id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                title,
+                phrase,
+                description,
+                genre,
+                tags: tags.split(" ")
+            })
+        });
+        const data: ApiResponse = await response.json();
+
+        if (data.success) {
+            toast.success("小説を作成しました");
+            window.location.href = `/dashboard/works/${data.body.slug}`;
+        } else {
+            toast.error("小説の作成に失敗しました");
+        }
+        setIsLoading(false);
+    });
 
     return (
         <>
-        <title>小説を管理 / ReNovel</title>
+            <title>{`${novel?.work.title ?? "小説"} / 管理 / ReNovel`}</title>
 
 
-        <div className={`mt-3 text-3xl text-center ${kaisei_decol.className}`}>
-            小説管理
-        </div>
 
+            <div className={`mt-3 text-3xl text-center ${kaisei_decol.className}`}>
+                {novel?.work.title}
+            </div>
 
-        <div className="mt-6">
-            <ButtonLink href="/dashboard/works/new" className="hover:bg-gray-100">
-                新規小説作成
-            </ButtonLink>
-        </div>
+            <div className="flex mt-3">
+                <div className="w-"></div>
 
-        <div className="flex mt-3">
-            <div className="w-1/5"></div>
-            <div className="w-full">
-                {novels.map((novel, index) => {
-                    const work: Novel = novel.work;
+                <div className={`w-full text-center items-center justify-center h-screen ${isLoading ? "" : "hidden"}`}>
+                    <div className="spinner"></div>
+                </div>
 
-                    return (
-                        <Link href={`/dashboard/works/${work.slug}`} key={`novel-${index}`} className="">
-                            <div className="mt-3 border p-5 rounded-lg shadow-lg bg-gray-50 hover:shadow-xl transition transform hover:-translate-y-1 hover:scale-100">
-                                <div className="flex items-center">
-                                    <div className="w-1/2">
-                                        <div className="text-lg font-bold text-indigo-600 mb-1">
-                                            { work.title }
-                                        </div>
-                                    
-                                        <div className="text-[1.5rm] text-gray-500 ml-3 mb-1">
-                                            { work.phrase }
-                                        </div>
-                                    </div>
+                <div className={`w-full ${isLoading ? "hidden" : ""}`}> { /* メイン画面 */}
+                    <div className="flex">
+                        <div className="w-1/3 px-1 py-2 ">
+                            <div className="border rounded px-2 py-2">
+                                <div className={`text-2xl justify-center flex items-center ${noto_serif.className}`}>
+                                    <Activity />アナリティクス
+                                </div>
 
-                                    <div className="w-full flex items-center justify-between">
-                                        <div className="flex items-centertext-1.5xl font-bold text-orange-500" title="フォロワー数">
-                                            <UserRoundCheck /> 
-                                            <div className="ml-1">
-                                                { novel.follower }
-                                            </div>
+                                <div className="w-full mt-3 text-center">
+                                    <div className="text-2xl flex items-center justify-center border rounded py-1" title="閲覧数">
+                                        <div onMouseOut={() => { setWatchOnMouse(!watchOnMouse); }}>
+                                            {watchOnMouse ? <div className="ml-2 text-gray-500">閲覧数</div> : <Eye />}
                                         </div>
 
-                                        <div className="text-1.5xl font-bold text-orange-500" title="総ポイント">
-                                            <OutboundIcon /> { work.point }
-                                        </div>
-
-                                        <div className="flex items-center text-1.5xl font-bold text-orange-500" title="総閲覧数">
-                                            <Activity /> 
-                                            <div className="ml-1">
-                                                { novel.view }
-                                            </div>
-                                        </div>
-
-                                        <div className="text-sm text-gray-500">
-                                            最終更新日: { work.updated_at }
+                                        <div className="ml-3">
+                                            {novel?.view}
                                         </div>
                                     </div>
 
-                                    
+                                    <div className="mt-2 text-2xl flex items-center justify-center border rounded py-1" title="閲覧数">
+                                        <div onMouseOut={() => { setFollowOnMouse(!followOnMouse); }}>
+                                            {followOnMouse ? <div className="ml-2 text-gray-500">フォロワー数</div> : <UserRoundCheck />}
+                                        </div>
 
+                                        <div className="ml-3">
+                                            {novel?.follower}
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-2 text-2xl flex items-center justify-center border rounded py-1" title="閲覧数">
+                                        <div onMouseOut={() => { setPointOnMouse(!pointOnMouse); }}>
+                                            {pointOnMouse ? <div className="ml-2 text-gray-500">総ポイント</div> : <SportsScoreIcon />}
+                                        </div>
+
+                                        <div className="ml-3">
+                                            {novel?.work.point}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </Link>
-                    );
-                })}
+                        </div>
+                        <div className="w-1/3 px-1 py-2">
+                            <div className={`border rounded px-2 py-2 ${isAdmin ? "" : "bg-gray-100"}`} title={isAdmin ? "編集可能" : "編集不可"}>
+                                <div className={`text-2xl justify-center flex items-center ${noto_serif.className}`}>
+                                    <SettingsIcon />小説設定
+                                </div>
+
+                                <form onSubmit={updateNovel}>
+                                    <Input
+                                        name="title"
+                                        value={novel?.work.title}
+                                        placeholder="タイトル"
+                                        readOnly={!isAdmin}
+                                    />
+
+                                    <Input
+                                        name="phrase"
+                                        value={novel?.work.phrase}
+                                        placeholder="一言紹介"
+                                        readOnly={!isAdmin}
+                                    />
+
+                                    <textarea
+                                        name="description"
+                                        className="w-full mt-3 rounded border px-4 py-2"
+                                        placeholder="説明"
+                                        defaultValue={novel?.work.description}
+                                        readOnly={!isAdmin}
+                                    />
+
+                                    <select 
+                                        name="genre" 
+                                        className="mt-3 border rounded px-3 py-2 w-full" 
+                                        value={selectedGenre} 
+                                        onChange={(e) => {setSelectedGenre(e.target.value as NovelGenre)}}
+                                        disabled={!isAdmin}>
+                                        <option value="action">現代ファンタジー</option>
+                                        <option value="fantasy">異世界ファンタジー</option>
+                                        <option value="love">現代恋愛</option>
+                                        <option value="fantasy-love">異世界恋愛</option>
+                                        <option value="sf">SF</option>
+                                        <option value="horror">ホラー</option>
+                                        <option value="mystery">ミステリー</option>
+                                        <option value="adventure">冒険</option>
+                                        <option value="comedy">コメディ</option>
+                                        <option value="thriller">スリラー</option>
+                                        <option value="history">歴史</option>
+                                        <option value="other">その他</option>
+                                    </select>
+
+                                    <Input
+                                        type="text"
+                                        name="tags"
+                                        placeholder="タグ 半角スペースで区切ります ハッシュタグはいりません"
+                                        required={false}
+                                        readOnly={!isAdmin}
+                                    />
+
+                                    <button className={`mt-3 w-full rounded text-center py-2 border hover:bg-gray-100`} disabled={!isAdmin}>
+                                        更新
+                                    </button>
+                                </form>
+
+                                
+                            </div>
+                        </div>
+                        <div className="w-1/3 px-1 py-2">
+                            <div className={`border rounded px-2 py-2 ${isAdmin ? "" : "bg-gray-100"}`} title={isAdmin ? "編集可能" : "編集不可"}>
+                                <div className={`text-2xl justify-center flex items-center ${noto_serif.className}`}>
+                                    <PersonIcon />共同作者設定
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-3">
+                        { novelType == "long" ? (
+                            <>
+                            </>
+                        ) : (
+                            <>
+                            </>
+                        ) }
+                    </div>
+                </div>
+                <div className="w-"></div>
             </div>
-            <div className="w-1/5"></div>
-        </div>
-        
+
 
         </>
     );

@@ -187,7 +187,7 @@ export default function Dashboard(): ReactElement {
         </div>
 
         <div className="mt-3 px-2 py-2">
-            <div className="border border-red-500 px-2 rounded py-2">
+            <div className="border px-2 rounded py-2">
                 <div className="text-center text-2xl">
                     アカウント設定
                 </div>

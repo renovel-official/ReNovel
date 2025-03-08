@@ -10,7 +10,7 @@ type NovelGenre =
   | "comedy"         // コメディ
   | "thriller"       // スリラー
   | "history"        // 歴史
-  | "othor";         // その他
+  | "other";         // その他
 
 const NovelGenreList: NovelGenre[] = [
   "action",
@@ -24,7 +24,7 @@ const NovelGenreList: NovelGenre[] = [
   "comedy",
   "thriller",
   "history",
-  "othor",
+  "other",
 ];
 
 
