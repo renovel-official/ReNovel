@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactElement, useState, useEffect } from "react";
-import { Activity, UserRoundCheck } from "lucide-react";
+import { ChartLine, UserRoundCheck } from "lucide-react";
 import { Kaisei_Decol } from "next/font/google";
 import { toast } from "sonner";
 
@@ -89,7 +89,7 @@ export default function Novels(): ReactElement {
                                         </div>
 
                                         <div className="flex items-center text-1.5xl font-bold text-orange-500" title="総閲覧数">
-                                            <Activity /> 
+                                            <ChartLine /> 
                                             <div className="ml-1">
                                                 { novel.view }
                                             </div>

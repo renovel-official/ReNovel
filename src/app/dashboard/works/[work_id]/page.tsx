@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactElement, useState, useEffect, FormEvent } from "react";
-import { Activity, UserRoundCheck, Eye } from "lucide-react";
+import { ChartLine, UserRoundCheck, Eye, ArrowLeft  } from "lucide-react";
 import { Kaisei_Decol, Noto_Serif_JP } from "next/font/google";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
@@ -17,6 +17,7 @@ import Episode from "@/interface/episode";
 import NovelType from "@/types/novel";
 import Input from "@/components/ui/input";
 import Link from "next/link";
+import User from "@/interface/user";
 
 const kaisei_decol = Kaisei_Decol({ weight: "400", subsets: ["latin"] });
 const noto_serif = Noto_Serif_JP({ subsets: ["latin"] });
@@ -32,6 +33,8 @@ export default function Novels(): ReactElement {
     const [selectedGenre, setSelectedGenre] = useState<NovelGenre>("action");
     const [novelType, setNovelType] = useState<NovelType>("long");
 
+    const authors: { name: string; email: string }[] = [];
+
 
     useEffect(() => {
         const fetchNovel = async () => {
@@ -46,6 +49,18 @@ export default function Novels(): ReactElement {
                 setNovel(data.body);
                 setSelectedGenre(novelResult.work.genre);
                 setNovelType(novelResult.work.type ?? "long");
+
+                for (let author of novel?.authors ?? []) {
+                    const email = author.email;
+
+                    const name: string = await (async () => {
+                        const response = await fetch(`/api/v2/user?email=${email}`);
+                        const data: ApiResponse = await response.json();
+                        return data.body.name;
+                    })();
+
+                    authors.push({ email, name })
+                }
             } else {
                 toast.error("小説の取得に失敗しました");
                 window.location.href = `/dashboard/works/`;
@@ -68,7 +83,7 @@ export default function Novels(): ReactElement {
         const tags: string = formData.get("tags") as string;
 
         const response: Response = await fetch(`/api/v3/works/${work_id}`, {
-            method: "PUT",
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json"
             },
@@ -83,10 +98,9 @@ export default function Novels(): ReactElement {
         const data: ApiResponse = await response.json();
 
         if (data.success) {
-            toast.success("小説を作成しました");
-            window.location.href = `/dashboard/works/${data.body.slug}`;
+            toast.success("小説を更新しました");
         } else {
-            toast.error("小説の作成に失敗しました");
+            toast.error("小説の更新に失敗しました");
         }
         setIsLoading(false);
     });
@@ -95,11 +109,22 @@ export default function Novels(): ReactElement {
         <>
             <title>{`${novel?.work.title ?? "小説"} / 管理 / ReNovel`}</title>
 
+            
+            <div className="flex items-center justify-between mr-5">
+                
+                <Link href={`/dashboard/works`}>
+                    <div className="flex items-center hover:underline hover:text-blue-500">
+                        <ArrowLeft />作品一覧
+                    </div>
+                </Link> 
 
-
-            <div className={`mt-3 text-3xl text-center ${kaisei_decol.className}`}>
-                {novel?.work.title}
+                <div className={`mt-3 text-3xl text-center ${kaisei_decol.className} flex-grow`}>
+                    {novel?.work.title}
+                </div>
             </div>
+            
+
+            
 
             <div className="flex mt-3">
                 <div className="w-"></div>
@@ -113,7 +138,7 @@ export default function Novels(): ReactElement {
                         <div className="w-1/3 px-1 py-2 ">
                             <div className="border rounded px-2 py-2">
                                 <div className={`text-2xl justify-center flex items-center ${noto_serif.className}`}>
-                                    <Activity />アナリティクス
+                                    <ChartLine />アナリティクス
                                 </div>
 
                                 <div className="w-full mt-3 text-center">
@@ -219,6 +244,12 @@ export default function Novels(): ReactElement {
                                 <div className={`text-2xl justify-center flex items-center ${noto_serif.className}`}>
                                     <PersonIcon />共同作者設定
                                 </div>
+
+                                { authors.map((author: { email: string; name: string }) => {
+                                    return (
+                                        
+                                    )
+                                }) }
                             </div>
                         </div>
                     </div>

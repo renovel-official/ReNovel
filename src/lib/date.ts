@@ -1,4 +1,4 @@
-async function getFormattedDate(format: string): Promise<string> {
+async function getFormattedDate(format: string = "YYYY/MM/DD HH:mm:ss"): Promise<string> {
     const options: Intl.DateTimeFormatOptions = {
         timeZone: 'Asia/Tokyo', // 日本時間（JST）
         year: 'numeric',

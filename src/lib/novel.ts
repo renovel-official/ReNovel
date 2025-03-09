@@ -1,11 +1,13 @@
 'use server';
 
+import { getEpisodesFromNovel, getNovelAllViwes } from "./episode";
 import { NovelAuthor, NovelResult } from "@/interface/novel";
-import { getNovelAllViwes } from "./episode";
 import { NovelGenreList } from "@/types/genre";
 
 import supabaseClient from "@/lib/supabase";
 import NovelGenre from "@/types/genre";
+import Episode from "@/interface/episode";
+import authUser from "./auth";
 
 
 const getNovelsAll = async (): Promise<NovelResult[] | null> => {
@@ -50,6 +52,7 @@ const getNovelFromId = (async (workId: string): Promise<NovelResult | null> => {
                 }
             }
             
+
             return error ? null : data;
         })(workId);
 
@@ -63,6 +66,10 @@ const getNovelFromId = (async (workId: string): Promise<NovelResult | null> => {
         })(workId);
 
         const view = await getNovelAllViwes(workId) ?? 0;
+        
+        const episodes = await getEpisodesFromNovel(workId) ?? [];
+        const now = Math.floor(Date.now() / 1000);
+        const isPublic = episodes.find((episode: Episode) => episode.public_date >= now) ? true : false;
 
         if (authorData) {
             return {
@@ -70,6 +77,7 @@ const getNovelFromId = (async (workId: string): Promise<NovelResult | null> => {
                 authors: authorData,
                 view,
                 follower,
+                isPublic
             };
         }
         
@@ -139,7 +147,21 @@ const getNovelsFromQuery = (async (queryText: string): Promise<NovelResult[]> =>
     return results.sort((a: NovelResult, b: NovelResult) => b.work.point - a.work.point);
 });
 
+const isAuthor = (async (workId: string, userId?: string | undefined | false): Promise<false | 'member' | 'admin'> => {
+    const novel = await getNovelFromId(workId);
+    
+    if (novel) {
+        if (userId) userId = await authUser();
+
+        const author = novel.authors.find((user: NovelAuthor) => user.email == userId);
+        return author ? (author.is_admin ? 'admin' : 'member') : false;
+    }
+
+    return false;
+})
+
 export {
+    isAuthor,
     getNovelsAll,
     getNovelFromId,
     getNovelsFromTags,

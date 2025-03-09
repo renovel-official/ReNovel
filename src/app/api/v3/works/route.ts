@@ -10,7 +10,6 @@ import supabaseClient from "@/lib/supabase";
 import apiResponse from "@/lib/response";
 import NovelGenre, { NovelGenreList } from "@/types/genre";
 import authUser from "@/lib/auth";
-import Episode from "@/interface/episode";
 
 export async function GET(req: Request): Promise<Response> {
     const login = await authUser();
@@ -42,9 +41,7 @@ export async function GET(req: Request): Promise<Response> {
         const tagNovels = await getNovelsFromTags(tags.split(' '));
         if (tagNovels) novels.push(...tagNovels);
     } else {
-        console.log('All novels');
         const allNovels = await getNovelsAll();
-        console.log(`result: ${JSON.stringify(allNovels)}`);
         if (allNovels) novels.push(...allNovels);
     }
 
@@ -61,7 +58,6 @@ export async function POST(req: Request): Promise<Response> {
 
     // { title, phrase, description, type, genre, tags }
     const data = await req.json();
-    console.log(data);
 
     if (data.title && data.type && data.genre) {
         if (data.title.length > 20) return apiResponse(false, 'Title is too long', null, 400);
@@ -89,7 +85,6 @@ export async function POST(req: Request): Promise<Response> {
                     created_at: await getFormattedDate('YYYY/MM/DD HH:mm:ss')
                 });
             
-            console.log(error);
 
             return error ? false : true;
         })(novelId, data);

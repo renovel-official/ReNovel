@@ -34,6 +34,7 @@ interface NovelResult {
     episodes?: Episode[];
     isAuthor?: boolean;
     isAdmin?: boolean;
+    isPublic?: boolean;
 }
 
 

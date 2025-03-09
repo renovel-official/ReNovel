@@ -12,7 +12,7 @@ interface SidebarProps {
     login: boolean;
 }
 
-const zen_kaku_gothic_new = Zen_Kaku_Gothic_New({ weight: "400" });
+const zen_kaku_gothic_new = Zen_Kaku_Gothic_New({ weight: "400", subsets: ["latin"] });
 
 export default function Sidebar({ login }: SidebarProps): ReactElement {
     const [genreOpen, setGenreOpen] = useState<boolean>(true);

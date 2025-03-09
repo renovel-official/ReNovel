@@ -14,12 +14,12 @@ export default function Home() {
   ]);
 
   const [newNovels, setNovels] = useState<Novel[]>([
-    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: "14,556", updated_at: "2025-2/17" },
-    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: "14,556", updated_at: "2025-2/17" },
-    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: "14,556", updated_at: "2025-2/17" },
-    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: "14,556", updated_at: "2025-2/17" },
-    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: "14,556", updated_at: "2025-2/17" },
-    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: "14,556", updated_at: "2025-2/17" }
+    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: 14556, updated_at: "2025-2/17" },
+    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: 14556, updated_at: "2025-2/17" },
+    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: 14556, updated_at: "2025-2/17" },
+    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: 14556, updated_at: "2025-2/17" },
+    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: 14556, updated_at: "2025-2/17" },
+    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: 14556, updated_at: "2025-2/17" }
   ]);
 
   return (

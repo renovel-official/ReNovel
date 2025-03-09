@@ -6,6 +6,7 @@ interface Episode {
     text: string;
     good: number;
     view: string[];
+    public_date: number;
     created_at: string;
     updated_at: string;
 }
