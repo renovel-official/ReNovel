@@ -46,3 +46,34 @@
         -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
     }
 }
+
+@font-face {
+    font-family: "myfont";
+    src: url("/fonts/ipaexm.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "myfont2";
+    src: url("/fonts/ipaexg.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+  
+
+.custom-text {
+    font-family: "myfont";
+    font-size: 100%;
+    font: bold;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%
+}
+
+.custom-text2 {
+    font-family: "myfont2";
+    font-size: 100%;
+    font: bold;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%
+}

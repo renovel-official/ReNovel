@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactElement } from "react";
+
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import SearchIcon from '@mui/icons-material/Search';
@@ -13,13 +14,14 @@ interface HeaderProps {
     hasNotifications: boolean;
 }
 
+
 export default function Header({ login, hasNotifications }: HeaderProps): ReactElement {
     return (
         <>
             <div className="text-gray-600 flex shadow-md mt-3 ml-3 mr-3 px-4 py-4 rounded-md bg-white justify-between items-center border border-gray-100">
                 <Link href={`/`} className="flex items-center hover:underline">
                     <Image src={"/icon.png"} width={50} height={50} alt="" title={`logo`}/>
-                    <div className="font-bold text-3xl text-black">
+                    <div className={`font-bold text-3xl text-black`}>
                         ReNovel
                     </div>
                 </Link>

@@ -13,6 +13,8 @@ interface Novel {
     description: string;
     genre: NovelGenre;
     tags?: string[];
+    text?: string;
+    is_public?: boolean;
 
     created_at?: string;
     updated_at?: string;

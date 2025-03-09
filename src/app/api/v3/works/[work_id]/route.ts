@@ -12,8 +12,13 @@ import apiResponse from "@/lib/response";
 import authUser from "@/lib/auth";
 import Episode from "@/interface/episode";
 
+interface Context {
+    params: { 
+        work_id: string;
+    }
+}
 
-export async function GET(req: Request, context: { params: { work_id: string } }): Promise<Response> {
+export async function GET(req: Request, context: Context): Promise<Response> {
     const login: string | false = await authUser();
     const params = await context.params;
     const workId: string = params?.work_id ?? "";
@@ -51,7 +56,7 @@ export async function GET(req: Request, context: { params: { work_id: string } }
     );
 }
 
-export async function POST(req: Request, context: { params: { work_id: string } }): Promise<Response> {
+export async function POST(req: Request, context: Context): Promise<Response> {
     const login: string | false = await authUser();
 
     if (login) {
@@ -66,6 +71,7 @@ export async function POST(req: Request, context: { params: { work_id: string } 
 
             if (title.length === 0) return apiResponse(false, 'Title is so short');
             if (title.length >= 100) return apiResponse(false, 'Title is so long');
+            if (text.length === 0) return apiResponse(false, 'Text is so short');
 
             const episodeId: string = await generateUniqueNumber();
             const now = await getFormattedDate();
@@ -77,15 +83,17 @@ export async function POST(req: Request, context: { params: { work_id: string } 
                     slug: episodeId, 
                     title, 
                     text, 
-                    public_date: publicDate, 
+                    public_date: publicDate,
                     created_at: now, 
                     updated_at: now 
                 });
 
+            console.log(error);
+
             if (!error) return apiResponse(
                 true, 
                 'Success to upload episode',
-                { episodeId }
+                { episode_id: episodeId }
             );
         }
     } else {
@@ -103,7 +111,7 @@ export async function POST(req: Request, context: { params: { work_id: string } 
     );
 }
 
-export async function PATCH(req: Request, context: { params: { work_id: string } }): Promise<Response> {
+export async function PUT(req: Request, context: Context): Promise<Response> {
     const login = await authUser();
 
     if (login) {
@@ -111,14 +119,13 @@ export async function PATCH(req: Request, context: { params: { work_id: string }
         const workId: string = params.work_id;
 
         const novel: NovelResult | null = await getNovelFromId(workId);
-        console.log(novel);
         const author: false | "member" | "admin" = await isAuthor(workId, login);
 
         if (novel && author == "admin") {
             const data = await req.json();
 
             if (data.title.length > 20) return apiResponse(false, 'Title is too long', null, 400);
-            if (data.phrase.length > 20) return apiResponse(false, 'Phrase is too long', null, 400);
+            if (data.phrase.length > 35) return apiResponse(false, 'Phrase is too long', null, 400);
             if (data.description.length > 1000) return apiResponse(false, 'Description is too long', null, 400);
             if (data.tags.length > 10) return apiResponse(false, 'Tags are too long', null, 400);
             if (!NovelGenreList.includes(data.genre)) return apiResponse(false, 'Invalid genre', null, 400);
@@ -132,6 +139,7 @@ export async function PATCH(req: Request, context: { params: { work_id: string }
                     type: data.type,
                     genre: data.genre,
                     tags: data.tags,
+                    is_public: data.is_public,
                     updated_at: await getFormattedDate('YYYY/MM/DD HH:mm:ss'),
                 })
                 .eq('slug', workId);
@@ -148,18 +156,116 @@ export async function PATCH(req: Request, context: { params: { work_id: string }
     );
 }
 
-export async function PUT(req: Request, context: { params: { work_id: string } }): Promise<Response> {
-    const login: string | false = await authUser();
-
-    
-}
-
-
-export async function DELETE(req: Request, context: { params: { work_id: string } }): Promise<Response> {
+export async function PATCH(req: Request, context: Context): Promise<Response> {
     const login = await authUser();
 
     if (login) {
         const params = await context.params;
-        const workId: string = params;
+        const workId: string = params.work_id;
+
+        const novel: NovelResult | null = await getNovelFromId(workId);
+        console.log(novel);
+        const author: false | "member" | "admin" = await isAuthor(workId, login);
+
+        if (author) {
+            const { text }: { text: string } = await req.json();
+
+            const { error } = await supabaseClient
+                .from('novels')
+                .update({ text })
+                .eq('slug', workId);
+
+
+            if (!error) return apiResponse(
+                true,
+                'Success to update data'
+            );
+
+        }
     }
+
+    return apiResponse(false, 'Failed to update story');
+}
+
+export async function DELETE(req: Request, context: Context): Promise<Response> {
+    const login = await authUser();
+
+    if (login) {
+        const params = await context.params;
+        const workId: string = params.work_id;
+        const isAdmin: boolean = (await isAuthor(workId, login)) == "admin";
+
+        if (isAdmin) {
+            const episodesDeleteResult: boolean = await (async (): Promise<boolean> => {
+                const { error } = await supabaseClient
+                    .from('episodes')
+                    .delete()
+                    .eq('novel_id', workId);
+
+                return error ? false : true;
+            })();
+
+            if (episodesDeleteResult) {
+                const authorsDeleteResult: boolean = await (async (): Promise<boolean> => {
+                    const { error } = await supabaseClient
+                        .from('author_novels')
+                        .delete()
+                        .eq('novel_id', workId);
+
+                    return error ? false : true;
+                })();
+
+                if (authorsDeleteResult) {
+                    const followDateDeleteResult: boolean = await (async (): Promise<boolean> => {
+                        const { error } = await supabaseClient
+                        .from('follow_novels')
+                        .delete()
+                        .eq('novel_id', workId);
+
+                        return error ? false : true;
+                    })();
+
+                    if (followDateDeleteResult) {
+                        const novelCommentsDeleteResult: boolean = await (async (): Promise<boolean> => {
+                            const { error } = await supabaseClient
+                                .from('novel_comments')
+                                .delete()
+                                .eq('novel_id', workId);
+
+                            return error ? false : true;
+                        })();
+
+                        if (novelCommentsDeleteResult) {
+                            const novelDeleteResult: boolean = await (async (): Promise<boolean> => {
+                                const { error } = await supabaseClient
+                                    .from('novels')
+                                    .delete()
+                                    .eq('slug', workId);
+
+                                return error ? false : true;
+                            })();
+
+                            if (novelDeleteResult) {
+                                return apiResponse(
+                                    true,
+                                    'Success to delete novel'
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+
+        } else {
+            return apiResponse(
+                false,
+                "You don't have permission"
+            );
+        }
+    }
+
+    return apiResponse(
+        false,
+        'Failed to delete novel'
+    );
 }

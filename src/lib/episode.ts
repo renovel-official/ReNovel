@@ -11,7 +11,7 @@ const getNovelAllViwes = (async (workId: string): Promise<number> => {
 
     if (error) return 0;
 
-    const views = (data as Episode[])?.reduce((acc, cur) => acc + cur.view.length, 0) ?? 0;
+    const views = (data as Episode[])?.reduce((acc, cur) => acc + cur.view, 0) ?? 0;
     return views;
 });
 
