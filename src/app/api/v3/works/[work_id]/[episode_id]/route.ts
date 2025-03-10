@@ -1,6 +1,9 @@
 'use server';
 
-export const dynamic = 'force-dynamic'
+export async function generateStaticParams() {
+    return []; // 空リストを返せばNext.jsは動的ルートと認識する
+}
+  
 
 import Novel, { NovelResult, NovelAuthor } from "@/interface/novel";
 import { getEpisodeFromId } from "@/lib/episode";
