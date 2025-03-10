@@ -1,5 +1,7 @@
 'use server';
 
+export const dynamic = 'force-dynamic'
+
 import { NovelResult, NovelAuthor } from "@/interface/novel";
 import { getNovelFromId, isAuthor } from "@/lib/novel";
 import { getUserFromSlug } from "@/lib/user";

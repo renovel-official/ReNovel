@@ -1,5 +1,7 @@
 'use server';
 
+export const dynamic = 'force-dynamic'
+
 import Novel, { NovelResult, NovelAuthor } from "@/interface/novel";
 import { getEpisodeFromId } from "@/lib/episode";
 import { getFormattedDate } from "@/lib/date";
