@@ -53,7 +53,7 @@ export async function PUT(req: Request, context: Context) {  // 小説の内容�
         const isAdmin = await isAuthor(workId, login);
 
         if (novel && episode && isAdmin) {
-
+            
         }
     }
 

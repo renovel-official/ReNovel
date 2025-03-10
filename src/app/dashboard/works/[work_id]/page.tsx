@@ -18,6 +18,7 @@ import Episode from "@/interface/episode";
 import NovelType from "@/types/novel";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
+import Head from "next/head";
 import Link from "next/link";
 import User from "@/interface/user";
 
@@ -230,7 +231,12 @@ export default function Novel(): ReactElement {
 
     return (
         <>
+            <Head>
+                <title>{`${novel?.work.title ?? "小説"} / 管理 / ReNovel`}</title>
+            </Head>
+
             <title>{`${novel?.work.title ?? "小説"} / 管理 / ReNovel`}</title>
+            
 
             <AddUserDialog 
                 open={modalOpen} 

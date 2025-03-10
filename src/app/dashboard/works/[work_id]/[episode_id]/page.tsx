@@ -1,14 +1,16 @@
 'use client';
 
 import { ReactElement, useState, useEffect, useRef, Ref } from "react";
-import { Zen_Old_Mincho } from "next/font/google";
 import { NovelResult } from "@/interface/novel";
+import { ArrowLeft } from "lucide-react";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
 import ApiResponse from "@/interface/response";
 import Button from "@/components/ui/button";
 import Episode from "@/interface/episode";
+import Link from "next/link";
+
 
 export default function Novel(): ReactElement {
     const { work_id, episode_id }: { work_id: string; episode_id: string } = useParams();
@@ -38,11 +40,11 @@ export default function Novel(): ReactElement {
                 setNovel(novelResult);
                 setEpisode(thisEpisode ?? {} as Episode);
                 setTextLength(episode?.text.length ?? 0);
+                setIsLoading(false);
             } else {
                 toast.error("小説の取得に失敗しました");
-                window.location.href = `/dashboard/works/`;
+                window.location.href = `/dashboard/works/${work_id}`;
             }
-            setIsLoading(false);
         };
 
         fetchNovel();
@@ -54,7 +56,7 @@ export default function Novel(): ReactElement {
 
         if (title && text) {
             const response = await fetch(`/api/v3/works/${work_id}/${episode_id}`, {
-                method: 'POST',
+                method: 'PUT',
                 body: JSON.stringify({ title, text }),
                 headers: {
                     'Content-Type': 'application/json'
@@ -73,14 +75,28 @@ export default function Novel(): ReactElement {
             
             
         } else {
-            toast.error('タイトルとエピソード両方入力してください');
+            if (!autoSave) toast.error('タイトルとエピソード両方入力してください');
         }
 
         return;
     });
 
     textRef.current?.addEventListener('input', () => {
-        const text: string = (textRef.current?.value ?? "").replaceAll(' ', '').replaceAll('\n', '');
+        const toVoidWords: string[] = [
+            " ",
+            "　",
+            "\n",
+            "《《",
+            "》》",
+        ]
+        const text: string = ((): string => {
+            let text: string  = textRef.current?.value ?? "";
+            toVoidWords.map((word: string) => {
+                text = text.replaceAll(word, '');
+            });
+
+            return text;
+        })();
         setTextLength(text.length ?? 0);
 
         if ((text.length % 100) == 0) {
@@ -97,10 +113,16 @@ export default function Novel(): ReactElement {
                     <div className="spinner"></div>
                 </div>
 
-                <div className={`mt-5 text-center`}>
+                <div className={`mt-3 text-center`}>
+                    <Link href={`/dashboard/works/${work_id}`}>
+                        <div className="flex items-centerhover:underline hover:text-blue-500">
+                            <ArrowLeft />{ novel?.work.title } へ戻る
+                        </div>
+                    </Link>
+
                     <input 
                         type="text"
-                        className="border-b w-1/2 px-2 py-2 text-2xl focus:outline-none focus:border-black"
+                        className="mt-2 border-b w-1/2 px-2 py-2 text-2xl focus:outline-none focus:border-black"
                         placeholder="エピソードタイトルを入力"
                         defaultValue={episode?.text}
                         ref={titleRef}
