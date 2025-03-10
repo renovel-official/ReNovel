@@ -11,15 +11,7 @@ import apiResponse from "@/lib/response";
 import authUser from "@/lib/auth";
 import Episode from "@/interface/episode";
 
-
-interface Context {
-    params: {
-        work_id: string;
-        episode_id: string;
-    }
-}
-
-export async function GET(req: Request, context: Context) {  // 小説を取得
+export async function GET(req: Request, context: { params: { work_id: string; episode_id: string; } }) {  // 小説を取得
     const params = await context.params;
     const episodeId: string = params.episode_id;
     const episode: Episode | null = await getEpisodeFromId(episodeId);
@@ -38,11 +30,11 @@ export async function GET(req: Request, context: Context) {  // 小説を取得
     );
 }
 
-export async function POST(req: Request, context: Context) { // 小説を公開
+export async function POST(req: Request, context: { params: { work_id: string; episode_id: string; } }) { // 小説を公開
 
 }
 
-export async function PUT(req: Request, context: Context) {  // 小説の内容を更新
+export async function PUT(req: Request, context: { params: { work_id: string; episode_id: string; } }) {  // 小説の内容を更新
     const login = await authUser();
 
     if (login) {
@@ -81,7 +73,7 @@ export async function PUT(req: Request, context: Context) {  // 小説の内容�
     );
 }
 
-export async function DELETE(req: Request, context: Context) {
+export async function DELETE(req: Request, context: { params: { work_id: string; episode_id: string; } }) {
     const login = await authUser();
 
     if (login) {
