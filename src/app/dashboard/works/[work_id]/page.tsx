@@ -1,21 +1,23 @@
 'use client';
 
-import { ChartLine, UserRoundCheck, Eye, ArrowLeft, Mail, User as UserImg, UserRoundX, ThumbsUp, WrapText } from "lucide-react";
-import { ReactElement, useState, useEffect, FormEvent, Ref, useRef } from "react";
+import { ChartLine, UserRoundCheck, Eye, ArrowLeft, Mail, User as UserImg, UserRoundX, ThumbsUp, WrapText, Book } from "lucide-react";
+import { ReactElement, useState, useEffect, FormEvent, Ref, useRef, RefObject } from "react";
 import { Kaisei_Decol, Noto_Serif_JP } from "next/font/google";
 import { NovelAuthor, NovelResult } from "@/interface/novel";
+import { convertToJapanStamp } from "@/lib/date";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
-import AddUserDialog from "@/components/dialog";
+import EpisodeControl from "@/components/dialog/episodeControl";
 import SettingsIcon from '@mui/icons-material/Settings';
 import ApiResponse from "@/interface/response";
 import PersonIcon from '@mui/icons-material/Person';
 import ButtonLink from "@/components/ui/buttonLink";
 import NovelGenre from "@/types/genre";
-import Episode from "@/interface/episode";
 import NovelType from "@/types/novel";
+import AddUser from "@/components/dialog/addUser";
+import Episode from "@/interface/episode";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import Head from "next/head";
@@ -36,7 +38,10 @@ export default function Novel(): ReactElement {
 
     const idRef: Ref<HTMLInputElement> = useRef<HTMLInputElement>(null);
     const textRef: Ref<HTMLTextAreaElement> = useRef<HTMLTextAreaElement>(null);
+    const controlSelectEpisodeRef: Ref<HTMLSelectElement> = useRef<HTMLSelectElement>(null);
+    const publicDateRef: Ref<HTMLInputElement> = useRef<HTMLInputElement>(null);
 
+    const [controllerOpen, setControllerOpen] = useState<boolean>(false);
     const [followOnMouse, setFollowOnMouse] = useState<boolean>(false);
     const [authorOnMouse, setAuthorOnMouse] = useState<{ email: string; point: boolean }[]>([]);
     const [selectedGenre, setSelectedGenre] = useState<NovelGenre>("action");
@@ -65,10 +70,17 @@ export default function Novel(): ReactElement {
                 setNovelType(novelResult.work.type ?? "long");
                 setText(novelResult.work.text ?? "");
 
-                const authorPromises = novelResult.authors.map(async (author) => {
-                    const response = await fetch(`/api/v2/user?email=${author.email}`);
-                    const data: ApiResponse = await response.json();
-                    return { email: author.email, name: data.body.name };
+                const authorPromises = novelResult.authors.map(async (author): Promise<Author> => {
+                    try {
+                        const response = await fetch(`/api/v2/user?email=${author.email}`);
+                        const data: ApiResponse = await response.json();
+
+                        return { email: author.email, name: data.body.name };
+                    } catch {
+                        toast.error('ユーザーが見つかりません: ' + author.email);
+                        return { email: author.email, name: "unknown" };
+                    }
+
                 });
 
                 const authorData = await Promise.all(authorPromises);
@@ -119,9 +131,9 @@ export default function Novel(): ReactElement {
         setIsLoading(false);
     });
 
-    const openAuthorDialog = (() => { 
-        if (isAdmin) { 
-            setModalOpen(true); 
+    const openAuthorDialog = (() => {
+        if (isAdmin) {
+            setModalOpen(true);
         } else {
             toast.error('貴方にはユーザーを管理する権限がありません');
         }
@@ -150,7 +162,7 @@ export default function Novel(): ReactElement {
             } else {
                 toast.error('ユーザーの追加に失敗しました。少し時間を空けて再試行してください');
             }
-            
+
             return;
         }
         const user: User = data.body as User;
@@ -205,15 +217,60 @@ export default function Novel(): ReactElement {
         });
         const data: ApiResponse = await response.json();
 
-        if (!autoUpdate){
+        if (!autoUpdate) {
             if (data.success) {
                 toast.success('小説を更新しました');
             } else {
                 toast.error('小説の更新に失敗しました');
             }
         }
-        
+
         return
+    });
+
+    const deleteNovel = (async () => {
+        if (confirm('本当に削除しますか？')) {
+            const response = await fetch(`/api/v3/works/${work_id}`, {
+                method: 'DELETE',
+            });
+            const data: ApiResponse = await response.json();
+
+            if (data.success) {
+                window.location.href = `/dashboard/works`;
+                toast.success('小説の削除に成功しました');
+            } else {
+                toast.error('小説の削除に失敗しました');
+            }
+        }
+    });
+
+    const deleteEpisode = (async () => {
+        const episodeId: string | undefined = controlSelectEpisodeRef.current?.value;
+
+        if (episodeId) {
+            const response = await fetch(`/api/v3/works/${work_id}/${episodeId}`, {
+                method: 'DELETE'
+            });
+            const data: ApiResponse = await response.json();
+
+            if (data.success) {
+                const index: number | undefined = novel?.episodes?.findIndex((episode: Episode) => episode.slug == episodeId);
+
+                if (index) {
+                    (novel?.episodes ?? []).slice(index, 1);
+                }
+
+                toast.success('エピソードの削除に成功しました');
+                setControllerOpen(false);
+                return;
+            }
+        }
+
+        toast.error('エピソードの削除に失敗しました');
+    });
+
+    const updateEpisode = (async () => {
+        console.log(convertToJapanStamp(publicDateRef.current?.value ?? ""));
     });
 
     useEffect(() => {
@@ -221,7 +278,7 @@ export default function Novel(): ReactElement {
             e.preventDefault();
             const length: number = textRef.current?.value.length ?? 0;
             console.log(length);
-    
+
             if ((length % 100) === 0) {
                 updateShortEpisode(true);
                 return;
@@ -236,13 +293,23 @@ export default function Novel(): ReactElement {
             </Head>
 
             <title>{`${novel?.work.title ?? "小説"} / 管理 / ReNovel`}</title>
-            
 
-            <AddUserDialog 
-                open={modalOpen} 
+
+            <AddUser
+                open={modalOpen}
                 idRef={idRef}
-                onCancel={() => { setModalOpen(false); }} 
-                onOk={addAuthor} 
+                onCancel={() => { setModalOpen(false); }}
+                onOk={addAuthor}
+            />
+
+            <EpisodeControl
+                open={controllerOpen}
+                episodes={novel?.episodes ?? []}
+                episodesRef={controlSelectEpisodeRef as RefObject<HTMLSelectElement>}
+                publicDateRef={publicDateRef as RefObject<HTMLInputElement>}
+                onDelete={() => { deleteEpisode(); }}
+                onCancel={() => { setControllerOpen(false); }}
+                onOk={() => { updateEpisode(); }}
             />
 
             <div className="flex items-center justify-between mr-5">
@@ -293,14 +360,31 @@ export default function Novel(): ReactElement {
 
                                     <div className="mt-2 text-2xl flex items-center justify-center border rounded py-1" title="総ポイント">
                                         <div onMouseOut={() => { setPointOnMouse(!pointOnMouse); }}>
-                                            { pointOnMouse ? <div className="ml-2 text-gray-500">総ポイント</div> : <SportsScoreIcon /> }
+                                            {pointOnMouse ? <div className="ml-2 text-gray-500">総ポイント</div> : <SportsScoreIcon />}
                                         </div>
 
                                         <div className="ml-3">
-                                            { novel?.work.point }
+                                            {novel?.work.point}
                                         </div>
                                     </div>
                                 </div>
+
+                                { novelType == "long" ? (
+                                    <>
+                                    <div className={`mt-5 text-2xl justify-center flex items-center ${noto_serif.className}`}>
+                                        <Book />小説操作
+                                    </div>
+
+                                    <ButtonLink href={`/dashboard/works/${work_id}/new`} className="mt-2 hover:bg-gray-100">
+                                        新規エピソード投稿
+                                    </ButtonLink>
+
+                                    <Button onClick={() => { setControllerOpen(true); }} className="w-full mt-2 hover:bg-gray-100">
+                                        エピソード操作
+                                    </Button>
+                                    </>
+                                ) : <></> }
+                                
                             </div>
                         </div>
                         <div className="w-1/3 px-1 py-2">
@@ -360,22 +444,28 @@ export default function Novel(): ReactElement {
                                         readOnly={!isAdmin}
                                     />
 
-                                    { novelType == 'short' ? (
+                                    {novelType == 'short' ? (
                                         <>
-                                        <select 
-                                            name="isPublic" 
-                                            defaultValue={novel?.work.is_public ? 'true' : 'false'}
-                                            className="mt-3 border rounded px-3 py-2 w-full">
-                                            <option value='true'>公開</option>
-                                            <option value='false'>非公開</option>
-                                        </select>
+                                            <select
+                                                name="isPublic"
+                                                defaultValue={novel?.work.is_public ? 'true' : 'false'}
+                                                className="mt-3 border rounded px-3 py-2 w-full">
+                                                <option value='true'>公開</option>
+                                                <option value='false'>非公開</option>
+                                            </select>
                                         </>
-                                    ) : <></> }
+                                    ) : <></>}
 
-                                    <button className={`mt-3 w-full rounded text-center py-2 border hover:bg-gray-100`} disabled={!isAdmin}>
+                                    <button className={`mt-3 w-full rounded text-center py-2 border hover:bg-gray-100`} disabled={isAdmin ? undefined : true}>
                                         更新
                                     </button>
                                 </form>
+
+                                {isAdmin ? (
+                                    <button onClick={deleteNovel} className="mt-3 w-full rounded text-center py-2 border border-red-300 hover:bg-red-400" disabled={isAdmin ? undefined : true}>
+                                        削除
+                                    </button>
+                                ) : <></>}
                             </div>
                         </div>
                         <div className="w-1/3 px-1 py-2 overflow-y-auto max-h-[calc(100vh-6rem)]">
@@ -426,64 +516,64 @@ export default function Novel(): ReactElement {
                     <div className="mt-3 px-1">
                         {novelType == "long" ? (
                             <>
-                            <div className={`mt-3 text-center text-2xl ${noto_serif.className}`}>
-                                エピソード一覧
-                            </div>
+                                <div className={`mt-3 text-center text-2xl ${noto_serif.className}`}>
+                                    エピソード一覧
+                                </div>
 
-                            <ButtonLink href={`/dashboard/works/${work_id}/new`} className="mt-2 hover:bg-gray-100">
-                                新規エピソード投稿
-                            </ButtonLink>
+                                {novel?.episodes?.map((episode: Episode) => {
+                                    return (
+                                        <>
+                                            <ButtonLink
+                                                href={`/dashboard/works/${work_id}/${episode.slug}`}
+                                                className="w-full px-4 items-center mt-2 flex hover:bg-gray-100"
+                                                key={episode.slug}
+                                                onClick={() => { setIsLoading(true); }}>
 
-                            { novel?.episodes?.map((episode: Episode) => {
-                                return (
-                                    <ButtonLink 
-                                        href={`/dashboard/works/${work_id}/${episode.slug}`} 
-                                        className="mt-2 flex hover:bg-gray-100"
-                                        key={episode.slug} >
-
-                                        <div className="w-2/3 text-left">
-                                            { episode.title }
-                                        </div>
-                                        
-                                        <div className="flex w-1/3 justify-between">
-
-                                            <div className="ml-1 flex items-center hover:bg-gray-200" title="文字数">
-                                                <WrapText />
-
-                                                <div className="ml-1">
-                                                    { episode.text.length }
+                                                <div className="px-5 w-2/3 flex items-center">
+                                                    {episode.title}
                                                 </div>
-                                            </div>
 
-                                            <div className="ml-1 flex items-center hover:bg-gray-200" title="閲覧数">
-                                                <Eye />
-                                                <div className="ml-1">
-                                                    { episode.view }
+                                                <div className="px-5 flex w-1/3 justify-between">
+
+                                                    <div className="w-[10%] ml-1 flex items-center hover:bg-gray-200" title="文字数">
+                                                        <WrapText />
+
+                                                        <div className="ml-1">
+                                                            {episode.text.length}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="ml-1 flex items-center hover:bg-gray-200" title="閲覧数">
+                                                        <Eye />
+                                                        <div className="ml-1">
+                                                            {episode.view}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="ml-2 flex items-center hover:bg-gray-200" title="いいね">
+                                                        <ThumbsUp />
+
+                                                        <div className="ml-1">
+                                                            {episode.view}
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </ButtonLink>
 
-                                            <div className="ml-2 flex items-center hover:bg-gray-200" title="いいね">
-                                                <ThumbsUp />
-
-                                                <div className="ml-1">
-                                                    { episode.view }
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </ButtonLink>
-                                );
-                            }) }
+                                        </>
+                                    );
+                                })}
                             </>
                         ) : (
                             <>
-                            <textarea 
-                                className="w-full rounded border px-4 py-2 h-[50vh]"
-                                placeholder="本文を入力"
-                                defaultValue={text}
-                                ref={textRef}
-                            />
+                                <textarea
+                                    className="w-full rounded border px-4 py-2 h-[50vh]"
+                                    placeholder="本文を入力"
+                                    defaultValue={text}
+                                    ref={textRef}
+                                />
 
-                            <Button className="w-full hover:bg-blue-100" onClick={updateShortEpisode}>更新</Button>
+                                <Button className="w-full hover:bg-blue-100" onClick={updateShortEpisode}>更新</Button>
                             </>
                         )}
                     </div>

@@ -7,13 +7,14 @@ async function generateToken(length: number = 32): Promise<string> {
 }
 
 async function generateUniqueNumber(): Promise<string> {
-    const timestamp = Date.now(); 
+    const timestamp = Date.now();
     const randomPart = Math.floor(Math.random() * 1_000_000_000);
   
     
     return `${timestamp}${randomPart}`;
 }
-  
+
+
 
 export {
     generateToken,

@@ -10,7 +10,7 @@ export type ModalProps = {
   onOk: () => void;
 };
 
-const AddUserDialog = ({ open, idRef, onCancel, onOk }: ModalProps) => {
+const AddUser = ({ open, idRef, onCancel, onOk }: ModalProps) => {
   return open ? (
     <>
       <div className="rounded-md bg-white border top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1/2 h-48 p-5 flex flex-col items-start absolute z-20">
@@ -46,4 +46,4 @@ const AddUserDialog = ({ open, idRef, onCancel, onOk }: ModalProps) => {
   );
 };
 
-export default AddUserDialog;
+export default AddUser;

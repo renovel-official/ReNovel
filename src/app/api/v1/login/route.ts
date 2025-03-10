@@ -10,14 +10,12 @@ import User from "@/interface/user";
 
 export async function POST(req: Request): Promise<Response> {
     const data = await req.json();
-    console.log(data);
 
     if (data.email && data.password) {
         const user: undefined | User = await getUserFromEmail(data.email);
-        console.log(user);
         
         if (user) {
-            const verify = await verifyPassword(data.password, user.password);
+            const verify = await verifyPassword(data.password, user.password ?? "");
             console.log(`Verify: ${verify}`);
             if (verify) {
                 const token: string = await registSession(data.email);

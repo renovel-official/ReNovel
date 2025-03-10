@@ -1,14 +1,14 @@
 'use client';
 
 import { ReactElement, useState, useEffect, useRef, Ref } from "react";
-import { Zen_Old_Mincho } from "next/font/google";
+import { ArrowLeft, Loader } from "lucide-react";
 import { NovelResult } from "@/interface/novel";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
+
 import ApiResponse from "@/interface/response";
 import Button from "@/components/ui/button";
-
-const zenOldMincho = Zen_Old_Mincho({ weight: "500", subsets: ["latin"] });
+import Link from "next/link";
 
 export default function Novel(): ReactElement {
     const { work_id }: { work_id: string } = useParams();
@@ -17,6 +17,7 @@ export default function Novel(): ReactElement {
     const textRef: Ref<HTMLTextAreaElement> = useRef<HTMLTextAreaElement>(null);
 
     const [textLength, setTextLength] = useState<number>(0);
+    const [isSaving, setIsSaving] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [novel, setNovel] = useState<NovelResult>();
 
@@ -84,6 +85,12 @@ export default function Novel(): ReactElement {
                 </div>
 
                 <div className={`mt-5 text-center`}>
+                    <Link href={`/dashboard/works/${work_id}`}>
+                        <div className="flex items-centerhover:underline hover:text-blue-500">
+                            <ArrowLeft />{ novel?.work.title } へ戻る
+                        </div>
+                    </Link>
+
                     <input 
                         type="text"
                         className="border-b w-1/2 px-2 py-2 text-2xl focus:outline-none focus:border-black"
@@ -104,10 +111,11 @@ export default function Novel(): ReactElement {
                     <br />
 
                     <Button 
-                        className="mt-5 px-4 py-2 w-full rounded hover:bg-gray-100"
+                        className={`flex items-center justify-center mt-5 px-4 py-2 w-full rounded ${isSaving ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
+                        disbled={isSaving}
                         onClick={handleSave}
                     >
-                        保存
+                        保存 { isSaving ? <Loader className="ml-1" /> : '' }
                     </Button>
                 </div>
             </div>

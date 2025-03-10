@@ -24,4 +24,32 @@ async function getFormattedDate(format: string = "YYYY/MM/DD HH:mm:ss"): Promise
         .replace('ss', formattedDate.split(' ')[1].split(':')[2]); // 秒
 }
 
-export { getFormattedDate };
+async function convertInputToTimeStamp(inputValue: string): Promise<string> {
+    const date = new Date(inputValue);
+    
+    const options: Intl.DateTimeFormatOptions = {
+        timeZone: 'Asia/Tokyo', // 日本時間（JST）
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false, // 24時間表示
+    };
+
+    return (new Intl.DateTimeFormat('ja-JP', options).format(date));
+}
+
+async function getNowDateNumber() {
+    return Date.now() + (9 * 60 * 60 * 1000);
+}
+
+function convertToJapanStamp(dateString: string): number {
+    const date = new Date(dateString + ' GMT+0900');
+    console.log(date);
+
+    return date.getTime() + (9 * 60 * 60 * 1000);
+}
+
+export { getFormattedDate, convertInputToTimeStamp, getNowDateNumber, convertToJapanStamp };

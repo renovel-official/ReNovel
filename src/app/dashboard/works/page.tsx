@@ -63,7 +63,7 @@ export default function Novels(): ReactElement {
                     const work: Novel = novel.work;
 
                     return (
-                        <Link href={`/dashboard/works/${work.slug}`} key={`novel-${index}`} className="">
+                        <Link href={`/dashboard/works/${work.slug}`} key={`novel-${index}`} className="" onClick={() => { setIsLoading(true); }}>
                             <div className="mt-3 border p-5 rounded-lg shadow-lg bg-gray-50 hover:shadow-xl transition transform hover:-translate-y-1 hover:scale-100">
                                 <div className="flex items-center">
                                     <div className="w-1/2">

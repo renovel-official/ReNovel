@@ -18,7 +18,6 @@ export async function POST(req: Request): Promise<Response> {
 
         if (name.length >= 1 && slug.length >= 1 && email.length >= 5 && password.length >= 4) {
             const existsUser: undefined | User = (await getUserFromEmail(email)) || (await getUserFromSlug(slug));
-            console.log(existsUser);
 
             if (!existsUser) {
                 const { error } = await supabaseClient
@@ -29,8 +28,6 @@ export async function POST(req: Request): Promise<Response> {
                         email,
                         password: (await hashPassword(password))
                     });
-
-                console.log(error);
 
                 if (!error) return apiResponse(
                     true,

@@ -164,7 +164,6 @@ export async function PATCH(req: Request, context: Context): Promise<Response> {
         const workId: string = params.work_id;
 
         const novel: NovelResult | null = await getNovelFromId(workId);
-        console.log(novel);
         const author: false | "member" | "admin" = await isAuthor(workId, login);
 
         if (author) {

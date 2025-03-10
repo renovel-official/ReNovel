@@ -1,8 +1,8 @@
 'use client';
 
 import { ReactElement, useState, useEffect, useRef, Ref } from "react";
+import { ArrowLeft, Loader } from "lucide-react";
 import { NovelResult } from "@/interface/novel";
-import { ArrowLeft } from "lucide-react";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
@@ -19,6 +19,7 @@ export default function Novel(): ReactElement {
     const textRef: Ref<HTMLTextAreaElement> = useRef<HTMLTextAreaElement>(null);
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isSaving, setIsSaving] = useState<boolean>(false);
     const [textLength, setTextLength] = useState<number>(0);
     const [episode, setEpisode] = useState<Episode>();
     const [novel, setNovel] = useState<NovelResult>();
@@ -51,6 +52,7 @@ export default function Novel(): ReactElement {
     }, []);
 
     const handleSave = (async (autoSave: boolean = false) => {
+        setIsSaving(true);
         const title: string | undefined = titleRef.current?.value;
         const text: string | undefined = textRef.current?.value;
 
@@ -66,7 +68,6 @@ export default function Novel(): ReactElement {
 
             if (!autoSave) {
                 if (data.success) {
-                    window.location.href = `/dashboard/works/${work_id}/${data.body.episode_id}`;
                     toast.success("エピソードが保存されました");
                 } else {
                     toast.error('エピソードの保存に失敗しました');
@@ -77,7 +78,7 @@ export default function Novel(): ReactElement {
         } else {
             if (!autoSave) toast.error('タイトルとエピソード両方入力してください');
         }
-
+        setIsSaving(false);
         return;
     });
 
@@ -142,10 +143,11 @@ export default function Novel(): ReactElement {
                     <br />
 
                     <Button 
-                        className="mt-5 px-4 py-2 w-full rounded hover:bg-gray-100"
+                        className={`flex items-center justify-center mt-5 px-4 py-2 w-full rounded ${isSaving ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
+                        disbled={isSaving}
                         onClick={handleSave}
                     >
-                        保存
+                        保存{ isSaving ? <Loader className="ml-1" /> : '' }
                     </Button>
                 </div>
             </div>
