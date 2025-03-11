@@ -1,7 +1,7 @@
 import Role from "@/types/role";
 
 interface User {
-    readonly id?: number;
+    id?: number;
     slug: string;
     name: string;
     email: string;

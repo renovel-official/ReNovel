@@ -7,6 +7,7 @@ import apiResponse from "@/lib/response";
 import authUser from "@/lib/auth";
 
 import User from "@/interface/user";
+import { ValueOf } from "next/dist/shared/lib/constants";
 
 const userKeys: string[] = ["name", "email", "description", "password", "role"];
 
@@ -45,8 +46,8 @@ export async function PUT(req: Request): Promise<Response> {
         if (user) {
             if (target == authResult && user) {
                 userKeys.forEach(async (key: string) => {
-                    if (data[key] && key != "role" && key != "id" && key != "password") {
-                        user[key as keyof User] = data[key];
+                    if (data[key as keyof User] && key != "role" && key != "id" && key != "password") {
+                        user[key as keyof User] = data[key as keyof User] as never;
                     } else if (key == "password" && data[key]) {
                         if (data[key].length >= 4) {
                             user["password"] = await hashPassword(data[key]);
@@ -56,8 +57,8 @@ export async function PUT(req: Request): Promise<Response> {
             } else {
                 if (user?.role == "admin") {
                     userKeys.forEach(async (key: string) => {
-                        if (data[key] && key != "id" && key != "password") {
-                            user[key as keyof User] = data[key];
+                        if (data[key as keyof User] && key != "id" && key != "password") {
+                            user[key as keyof User] = data[key as keyof User] as never;
                         } else if (key == "password" && data[key]) {
                             if (data[key].length >= 4) {
                                 user["password"] = await hashPassword(data[key]);
