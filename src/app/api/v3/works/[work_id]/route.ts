@@ -16,7 +16,13 @@ import apiResponse from "@/lib/response";
 import authUser from "@/lib/auth";
 import Episode from "@/interface/episode";
 
-export async function GET(req: Request, context: { params: { work_id: string; } }): Promise<Response> {
+interface ReqContext {
+    params: Promise<{
+        work_id: string;
+    }>
+}
+
+export async function GET(req: Request, context: ReqContext): Promise<Response> {
     const login: string | false = await authUser();
     const params = await context.params;
     const workId: string = params?.work_id ?? "";
@@ -54,7 +60,7 @@ export async function GET(req: Request, context: { params: { work_id: string; } 
     );
 }
 
-export async function POST(req: Request, context: { params: { work_id: string; } }): Promise<Response> {
+export async function POST(req: Request, context: ReqContext): Promise<Response> {
     const login: string | false = await authUser();
 
     if (login) {
@@ -109,7 +115,7 @@ export async function POST(req: Request, context: { params: { work_id: string; }
     );
 }
 
-export async function PUT(req: Request, context: { params: { work_id: string; } }): Promise<Response> {
+export async function PUT(req: Request, context: ReqContext): Promise<Response> {
     const login = await authUser();
 
     if (login) {
@@ -154,7 +160,7 @@ export async function PUT(req: Request, context: { params: { work_id: string; } 
     );
 }
 
-export async function PATCH(req: Request, context: { params: { work_id: string; } }): Promise<Response> {
+export async function PATCH(req: Request, context: ReqContext): Promise<Response> {
     const login = await authUser();
 
     if (login) {
@@ -184,7 +190,7 @@ export async function PATCH(req: Request, context: { params: { work_id: string; 
     return apiResponse(false, 'Failed to update story');
 }
 
-export async function DELETE(req: Request, context: { params: { work_id: string; } }): Promise<Response> {
+export async function DELETE(req: Request, context: ReqContext): Promise<Response> {
     const login = await authUser();
 
     if (login) {

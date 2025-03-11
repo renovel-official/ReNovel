@@ -14,7 +14,13 @@ import apiResponse from "@/lib/response";
 import authUser from "@/lib/auth";
 import User from "@/interface/user";
 
-export async function GET(req: Request, context: { params: { work_id: string; } }) {
+interface ReqContext {
+    params: Promise<{
+        work_id: string;
+    }>
+}
+
+export async function GET(req: Request, context: ReqContext) {
     const params = await context.params;
     const workId: string = params.work_id;
     
@@ -36,7 +42,7 @@ export async function GET(req: Request, context: { params: { work_id: string; } 
     }
 }
 
-export async function POST(req: Request, context: { params: { work_id: string; } }) {
+export async function POST(req: Request, context: ReqContext) {
     const params = await context.params;
     const workId: string = params.work_id;
 
@@ -87,7 +93,7 @@ export async function POST(req: Request, context: { params: { work_id: string; }
     );
 }
 
-export async function DELETE(req: Request, context: { params: { work_id: string; } }) {
+export async function DELETE(req: Request, context: ReqContext) {
     const login: false | string = await authUser();
 
     if (login) {
