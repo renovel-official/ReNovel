@@ -147,13 +147,13 @@ const getNovelsFromQuery = (async (queryText: string): Promise<NovelResult[]> =>
     return results.sort((a: NovelResult, b: NovelResult) => b.work.point - a.work.point);
 });
 
-const isAuthor = (async (workId: string, userId?: string | undefined | false): Promise<false | 'member' | 'admin'> => {
+const isAuthor = (async (workId: string, email?: string | undefined | false): Promise<false | 'member' | 'admin'> => {
     const novel = await getNovelFromId(workId);
     
     if (novel) {
-        if (userId) userId = await authUser();
+        if (email) email = await authUser();
 
-        const author = novel.authors.find((user: NovelAuthor) => user.email == userId);
+        const author = novel.authors.find((user: NovelAuthor) => user.email == email);
         return author ? (author.is_admin ? 'admin' : 'member') : false;
     }
 

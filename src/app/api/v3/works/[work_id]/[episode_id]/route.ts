@@ -1,13 +1,8 @@
 'use server';
 
-export async function generateStaticParams() {
-    return []; // 空リストを返せばNext.jsは動的ルートと認識する
-}
-  
-
+import { getFormattedDate, getNowDateNumber } from "@/lib/date";
 import Novel, { NovelResult, NovelAuthor } from "@/interface/novel";
 import { getEpisodeFromId } from "@/lib/episode";
-import { getFormattedDate } from "@/lib/date";
 import { getNovelFromId } from "@/lib/novel";
 import { isAuthor } from "@/lib/novel";
 
@@ -16,7 +11,14 @@ import apiResponse from "@/lib/response";
 import authUser from "@/lib/auth";
 import Episode from "@/interface/episode";
 
-export async function GET(req: Request, context: { params: { work_id: string; episode_id: string; } }) {  // 小説を取得
+interface Context {
+    params: { 
+        work_id: string; 
+        episode_id: string; 
+    }
+}
+
+export async function GET(req: Request, context: Context) {  // 小説を取得
     const params = await context.params;
     const episodeId: string = params.episode_id;
     const episode: Episode | null = await getEpisodeFromId(episodeId);
@@ -35,11 +37,71 @@ export async function GET(req: Request, context: { params: { work_id: string; ep
     );
 }
 
-export async function POST(req: Request, context: { params: { work_id: string; episode_id: string; } }) { // 小説を公開
+export async function POST(req: Request, context: Context) { // 小説を公開
+    const login = await authUser();
 
+    if (login) {
+        const params = await context.params;
+        const workId: string = params.work_id;
+        const episodeId: string = params.episode_id;
+        const novel: NovelResult | null = await getNovelFromId(workId);
+        const episode: Episode | null = await getEpisodeFromId(episodeId);
+
+        if (novel && episode) {
+            const isAdmin = (await isAuthor(workId, login)) == "admin";
+
+            if (isAdmin) {
+                const { date } = await req.json();
+                const nowTime = await getNowDateNumber();
+
+                if (typeof(date) == "number" && nowTime <= date) {
+                    const { error } = await supabaseClient
+                        .from('episodes')
+                        .update({ public_date: date })
+                        .eq('novel_id', workId)
+                        .eq('slug', episodeId);
+
+                    if (!error) return apiResponse(
+                        true,
+                        'Success to upload episode',
+                        {
+                            episode_id: episodeId,
+                            public_date: date
+                        }
+                    );
+                } else if (date == "private") {
+                    const { error } = await supabaseClient
+                        .from('episodes')
+                        .update({ public_date: null })
+                        .eq('novel_id', workId)
+                        .eq('slug', episodeId);
+
+                    if (!error) return apiResponse(
+                        true,
+                        'Success to private episode',
+                        {
+                            episode_id: episodeId
+                        }
+                    );
+                } else {
+                    return apiResponse(
+                        false,
+                        'Date is before'
+                    );
+                }
+            } else {
+                apiResponse(false, "You don't have permission");
+            }
+        }
+    }
+
+    return apiResponse(
+        false,
+        'Failed to upload episode'
+    );
 }
 
-export async function PUT(req: Request, context: { params: { work_id: string; episode_id: string; } }) {  // 小説の内容を更新
+export async function PUT(req: Request, context: Context) {  // 小説の内容を更新
     const login = await authUser();
 
     if (login) {
@@ -78,7 +140,7 @@ export async function PUT(req: Request, context: { params: { work_id: string; ep
     );
 }
 
-export async function DELETE(req: Request, context: { params: { work_id: string; episode_id: string; } }) {
+export async function DELETE(req: Request, context: Context) {
     const login = await authUser();
 
     if (login) {

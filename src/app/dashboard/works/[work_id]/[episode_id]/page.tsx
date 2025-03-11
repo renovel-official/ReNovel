@@ -125,7 +125,7 @@ export default function Novel(): ReactElement {
                         type="text"
                         className="mt-2 border-b w-1/2 px-2 py-2 text-2xl focus:outline-none focus:border-black"
                         placeholder="エピソードタイトルを入力"
-                        defaultValue={episode?.text}
+                        defaultValue={episode?.title}
                         ref={titleRef}
                     /><br />
 

@@ -95,13 +95,13 @@ export default function Novel(): ReactElement {
                         type="text"
                         className="border-b w-1/2 px-2 py-2 text-2xl focus:outline-none focus:border-black"
                         placeholder="エピソードタイトルを入力"
-                        ref={titleRef}
+                        ref={ titleRef }
                     /><br />
 
                     <textarea
                         className="mt-5 w-3/4 px-2 py-2 h-[calc(100vh-15rem)] custom-text focus:outline-none"
                         placeholder="本文を入力"
-                        ref={textRef}
+                        ref={ textRef }
                     />
                     
                     <div className="text-gray-500">

@@ -270,7 +270,60 @@ export default function Novel(): ReactElement {
     });
 
     const updateEpisode = (async () => {
-        console.log(convertToJapanStamp(publicDateRef.current?.value ?? ""));
+        const date = await convertToJapanStamp(publicDateRef.current?.value ?? "");
+        const episodeId: string | undefined = controlSelectEpisodeRef.current?.value;
+        console.log(episodeId);
+
+        if (episodeId !== "選択してください") {
+            const response = await fetch(`/api/v3/works/${work_id}/${episodeId}`, {
+                method: 'POST',
+                body: JSON.stringify({ date }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data: ApiResponse = await response.json();
+
+            if (data.success) {
+                toast.success('エピソードの公開設定を適応しました');
+            } else {
+                if (data.message == "Date is before") {
+                    toast.error('公開時刻は現在時刻か、現在より後を指定してください');
+                } else if (data.message == "You don't have permission") {
+                    toast.error('貴方には公開権限がありません');
+                } else {
+                    toast.error('公開に失敗しました');
+                }
+            }
+        } else {
+            toast.error('エピソードを選択してください');
+        }
+
+        return;
+    });
+
+    const toPrivateEpisode = (async () => {
+        const episodeId: string | undefined = controlSelectEpisodeRef.current?.value;
+        console.log(episodeId);
+
+        if (episodeId !== "選択してください") {
+            const response = await fetch(`/api/v3/works/${work_id}/${episodeId}`, {
+                method: 'POST',
+                body: JSON.stringify({ date: "private" }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data: ApiResponse = await response.json();
+
+            if (data.success) {
+                toast.success('エピソードを非公開に設定しました');
+            } else {
+                toast.error('非公開に失敗しました');
+            }
+        } else {
+            toast.error('エピソードを選択してください');
+        }
     });
 
     useEffect(() => {
@@ -307,6 +360,7 @@ export default function Novel(): ReactElement {
                 episodes={novel?.episodes ?? []}
                 episodesRef={controlSelectEpisodeRef as RefObject<HTMLSelectElement>}
                 publicDateRef={publicDateRef as RefObject<HTMLInputElement>}
+                onToPrivate={() => { toPrivateEpisode(); }}
                 onDelete={() => { deleteEpisode(); }}
                 onCancel={() => { setControllerOpen(false); }}
                 onOk={() => { updateEpisode(); }}
@@ -379,7 +433,7 @@ export default function Novel(): ReactElement {
                                         新規エピソード投稿
                                     </ButtonLink>
 
-                                    <Button onClick={() => { setControllerOpen(true); }} className="w-full mt-2 hover:bg-gray-100">
+                                    <Button onClick={() => { setControllerOpen(true); }} className="w-full mt-2 hover:bg-gray-100" disbled={!isAdmin}>
                                         エピソード操作
                                     </Button>
                                     </>
@@ -481,7 +535,7 @@ export default function Novel(): ReactElement {
                                     }
 
                                     return (
-                                        <div key={index} className="flex w-full mt-2 rounded border px-4 py-2 justify-between" id={`author-${author.email}`}>
+                                        <div key={author.email} className="flex w-full mt-2 rounded border px-4 py-2 justify-between" id={`author-${author.email}`}>
                                             <div id="mail" className="text-gray-600">
                                                 {authorOnMouse[selfAuthorOnMouseIndex]?.point ? author.email : author.name}
                                             </div>
