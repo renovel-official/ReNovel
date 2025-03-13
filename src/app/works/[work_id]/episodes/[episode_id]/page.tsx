@@ -1,6 +1,8 @@
 'use client';
 
 import { ReactElement, useState, useEffect } from "react";
+import { textToHtmlConvert } from "@/lib/convert";
+import { getNowDateNumber } from "@/lib/date";
 import { ArrowLeft } from "lucide-react";
 import { NovelResult } from "@/interface/novel";
 import { useParams } from "next/navigation";
@@ -10,8 +12,6 @@ import Head from 'next/head';
 import ApiResponse from "@/interface/response";
 import Episode from "@/interface/episode";
 import Link from "next/link";
-import { textToHtmlConvert } from "@/lib/convert";
-import { getNowDateNumber } from "@/lib/date";
 
 export default function Novel(): ReactElement {
     const { work_id, episode_id } = useParams();
@@ -25,42 +25,50 @@ export default function Novel(): ReactElement {
     useEffect(() => {
         const fetchNovel = async () => {
             setIsLoading(true);
-            const response: Response = await fetch(`/api/v3/works/${work_id}`);
-            const data: ApiResponse = await response.json();
+            try {
+                const response: Response = await fetch(`/api/v3/works/${work_id}`);
+                const data: ApiResponse = await response.json();
 
-            if (data.success) {
+                if (!data.success) {
+                    throw new Error("小説の取得に失敗しました");
+                }
+
                 const novelResult: NovelResult = data.body;
-                const thisEpisodeIndex: number | undefined = novelResult.episodes?.findIndex((episode: Episode) => episode.slug == episode_id);
+                const thisEpisodeIndex: number | undefined = novelResult.episodes?.findIndex((episode: Episode) => episode.slug === episode_id);
                 console.log(thisEpisodeIndex);
-                if (thisEpisodeIndex != undefined) {
-                    const thisEpisode: Episode | undefined = (novelResult.episodes ?? [])[thisEpisodeIndex];
+                if (thisEpisodeIndex !== undefined) {
+                    const thisEpisode: Episode | undefined = novelResult.episodes?.[thisEpisodeIndex];
 
-                    if (!thisEpisode) window.location.href = `/works/${work_id}`;
-                    if (novelResult.work.type == "short") window.location.href = `/works/${work_id}`;
+                    if (!thisEpisode || novelResult.work.type === "short") {
+                        window.location.href = `/works/${work_id}`;
+                        return; // 早期リターン
+                    }
+
                     const nowDate = await getNowDateNumber();
 
                     if (thisEpisodeIndex > 0) {
-                        const lastEpisodeIndex = thisEpisodeIndex - 1;
-                        const lastEpisode: Episode = (novelResult.episodes ?? [])[lastEpisodeIndex];
-
-                        if (lastEpisode && lastEpisode.public_date && lastEpisode.public_date >= nowDate) setLastEpisodeId(lastEpisode.slug);
+                        const lastEpisode: Episode | undefined = (novelResult.episodes ?? [])[thisEpisodeIndex - 1];
+                        if (lastEpisode && lastEpisode?.public_date && lastEpisode.public_date <= nowDate) {
+                            setLastEpisodeId(lastEpisode.slug);
+                        }
                     }
 
-                    if (thisEpisodeIndex < (novelResult.episodes ?? []).length) {
-                        const nextEpisodeIndex = thisEpisodeIndex + 1;
-                        const nextEpisode: Episode | undefined = (novelResult.episodes ?? [])[nextEpisodeIndex];
-
-                        if (nextEpisode && nextEpisode.public_date && nextEpisode.public_date >= nowDate) setLastEpisodeId(nextEpisode.slug);
+                    if (thisEpisodeIndex < (novelResult.episodes ?? []).length - 1) {
+                        const nextEpisode: Episode | undefined = (novelResult.episodes ?? [])[thisEpisodeIndex + 1];
+                        if (nextEpisode && nextEpisode?.public_date && nextEpisode.public_date <= nowDate) {
+                            setNextEpisodeId(nextEpisode.slug);
+                            console.log(nextEpisode.slug);
+                        }
                     }
-    
+
                     setNovel(novelResult);
                     setEpisode(thisEpisode ?? {} as Episode);
-                    setIsLoading(false);
                 }
-                
-            } else {
-                toast.error("小説の取得に失敗しました");
+            } catch (error) {
+                toast.error(error.message);
                 window.location.href = `/works/${work_id}`;
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -81,7 +89,7 @@ export default function Novel(): ReactElement {
                 {!isLoading && (
                     <>
                     { lastEpisodeId && (
-                        <Link href={`/works/${work_id}/${lastEpisodeId}`}>
+                        <Link href={`/works/${work_id}/episodes/${lastEpisodeId}`}>
                             <div className="w-full bg-gray-100 text-center text-2xl px-4 py-4 hover:bg-gray-300">
                                 前へ
                             </div>
@@ -106,7 +114,7 @@ export default function Novel(): ReactElement {
 
                     
                     { nextEpisodeId && (
-                        <Link href={`/works/${work_id}/${nextEpisodeId}`}>
+                        <Link href={`/works/${work_id}/episodes/${nextEpisodeId}`}>
                             <div className="w-full bg-gray-100 text-center text-2xl px-4 py-4 hover:bg-gray-300">
                                 次へ
                             </div>

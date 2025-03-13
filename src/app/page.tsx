@@ -18,6 +18,7 @@ export default function Home() {
     { title: "開発を開始しました", created_at: "2025-2/16" }
   ]);
   const [newNovels, setNovels] = useState<Novel[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getNovels = async () => {
@@ -32,6 +33,8 @@ export default function Home() {
               convertToTimestamp(b.work.updated_at ?? "") - convertToTimestamp(a.work.updated_at ?? ""));
 
         setNovels(publicNovels.map((novel: NovelResult) => novel.work));
+
+        setIsLoading(false);
       }
     };
 
@@ -40,7 +43,11 @@ export default function Home() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="py-6">
+      <div className={`w-full text-center items-center justify-center h-screen ${isLoading ? "" : "hidden"}`}>
+        <div className="spinner"></div>
+      </div>
+
+      <div className={`py-6 ${isLoading ? "hidden" : ""}`}>
         {/* お知らせセクション */}
         <div className="w-full px-3 py-3 mt-3 border rounded bg-white shadow-md">
           <div className={`text-center text-3xl ${kaisei_decol.className}`}>
