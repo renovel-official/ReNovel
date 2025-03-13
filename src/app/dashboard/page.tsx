@@ -195,13 +195,13 @@ export default function Dashboard(): ReactElement {
                     アカウント設定
                 </ButtonLink>
 
-                <ButtonLink href="/dashboard/account/delete" className="mt-3 w-full text-red-600 hover:bg-red-100">
+                <Button onClick={(() => { if (confirm('本当に削除しますか？')) window.location.href = "/dashboard/logout"})} className="mt-3 w-full text-red-600 hover:bg-red-100">
                     アカウント削除
-                </ButtonLink>
+                </Button>
 
-                <ButtonLink href="/dashboard/logout" className="mt-3 w-full text-red-600 hover:bg-red-100">
+                <Button onClick={(() => { window.location.href = "/dashboard/logout"})} className="mt-3 w-full text-red-600 hover:bg-red-100">
                     ログアウト
-                </ButtonLink>
+                </Button>
             </div>
         </div>
         </>
