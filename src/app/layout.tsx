@@ -16,7 +16,6 @@ export const metadata: Metadata = {
   },
   description: "ReNovelは、新しい才能を発掘する小説投稿サイトです。あなたの物語を世界に届けましょう。",
   metadataBase: new URL("https://re-novel-git-main-renovel.vercel.app/"),
-
   openGraph: {
     title: {
       default: "ReNovel | 小説家の卵を発掘する小説投稿サイト",
@@ -26,12 +25,6 @@ export const metadata: Metadata = {
     url: "https://re-novel-git-main-renovel.vercel.app/", // ドメイン確定後に変更
     type: "website",
     images: [
-      {
-        url: "https://re-novel-git-main-renovel.vercel.app/icon.png", // 画像URLを適宜変更
-        width: 600,
-        height: 600,
-        alt: "ReNovelのロゴ",
-      },
       {
         url: "https://re-novel-git-main-renovel.vercel.app/renovel_ogp.png", // 画像URLを適宜変更
         width: 1200,
