@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     template: "%s / ReNovel"
   },
   description: "ReNovelは、新しい才能を発掘する小説投稿サイトです。あなたの物語を世界に届けましょう。",
-  metadataBase: new URL("https://renovel.jp"),
+  metadataBase: new URL("https://re-novel-git-main-renovel.vercel.app/"),
 
   openGraph: {
     title: {
@@ -23,17 +23,17 @@ export const metadata: Metadata = {
       template: "%s / ReNovel"
     },
     description: "ReNovelは、新しい才能を発掘する小説投稿サイトです。あなたの物語を世界に届けましょう。",
-    url: "https://renovel.jp", // ドメイン確定後に変更
+    url: "https://re-novel-git-main-renovel.vercel.app/", // ドメイン確定後に変更
     type: "website",
     images: [
       {
-        url: "https://renovel.jp/icon.png", // 画像URLを適宜変更
+        url: "https://re-novel-git-main-renovel.vercel.app/icon.png", // 画像URLを適宜変更
         width: 600,
         height: 600,
         alt: "ReNovelのロゴ",
       },
       {
-        url: "https://renovel.jp/renovel_ogp.png", // 画像URLを適宜変更
+        url: "https://re-novel-git-main-renovel.vercel.app/renovel_ogp.png", // 画像URLを適宜変更
         width: 1200,
         height: 630,
         alt: "ReNovelのOGP",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
       template: "%s / ReNovel"
     },
     description: "ReNovelは、新しい才能を発掘する小説投稿サイトです。あなたの物語を世界に届けましょう。",
-    images: ["https://renovel.jp/renovel_ogp.png"],
+    images: ["https://re-novel-git-main-renovel.vercel.app/renovel_ogp.png"],
   },
 
   robots: {
