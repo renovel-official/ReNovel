@@ -21,5 +21,5 @@ export async function middleware(req: NextRequest) {
 
 // dashboard へのアクセスを制限
 export const config = {
-    matcher: ["/dashboard/:path*", "/login", "/register", "/api/:path*"]
+    matcher: ["/dashboard/:path*", "/login", "/register", "/api/:path*", "/api/v3/works/:work_id*", "/api/v3/works/:work_id*/:episode_id*"]
 };
