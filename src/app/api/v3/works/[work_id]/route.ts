@@ -1,9 +1,5 @@
 'use server';
 
-export async function generateStaticParams() {
-    return []; // 空リストを返せばNext.jsは動的ルートと認識する
-}  
-
 import { NovelResult, NovelAuthor } from "@/interface/novel";
 import { getNovelFromId, isAuthor } from "@/lib/novel";
 import { getEpisodesFromNovel } from "@/lib/episode";
