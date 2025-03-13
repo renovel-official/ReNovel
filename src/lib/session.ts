@@ -24,7 +24,7 @@ async function getSessionFromEmail(email: string): Promise<Session | undefined> 
     return data ?? undefined;
 }
 
-async function registSession(email: string): Promise<string> {
+async function registSession(email: string): Promise<string | undefined> {
     const isExists: Session | undefined = await getSessionFromEmail(email);
 
     if (isExists) {
@@ -37,8 +37,8 @@ async function registSession(email: string): Promise<string> {
         .from('sessions')
         .insert({ email, token });
 
-    if (error) throw new Error(error.message)
-    return token;
+    if (error) throw new Error(error.message);
+    return error ? undefined : token;
 }
 
 export {

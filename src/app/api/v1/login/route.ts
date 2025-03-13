@@ -16,19 +16,26 @@ export async function POST(req: Request): Promise<Response> {
         
         if (user) {
             const verify = await verifyPassword(data.password, user.password ?? "");
-            console.log(`Verify: ${verify}`);
             if (verify) {
-                const token: string = await registSession(data.email);
-                console.log(`Token: ${token}`);
-                const cookieStore = await cookies();
+                const token: string | undefined = await registSession(data.email);
 
-                cookieStore.set('session', token);
+                if (token) {
+                    const cookieStore = await cookies();
 
-                return apiResponse(
-                    true,
-                    'Success to login',
-                    { token }
-                );
+                    cookieStore.set('session', token);
+    
+                    return apiResponse(
+                        true,
+                        'Success to login',
+                        { token }
+                    );
+                } else {
+                    return apiResponse(
+                        false,
+                        'Failed to login action'
+                    );
+                }
+                
             }   
         }
     }
