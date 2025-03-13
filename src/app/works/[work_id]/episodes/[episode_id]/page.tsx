@@ -64,9 +64,9 @@ export default function Novel(): ReactElement {
                     setNovel(novelResult);
                     setEpisode(thisEpisode ?? {} as Episode);
                 }
-            } catch (error) {
-                toast.error(error.message);
+            } catch {
                 window.location.href = `/works/${work_id}`;
+                toast.error("エピソードの取得に失敗しました");
             } finally {
                 setIsLoading(false);
             }
