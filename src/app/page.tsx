@@ -1,26 +1,42 @@
 'use client';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Kaisei_Decol } from "next/font/google";
 
+import Novel, { NovelResult, NovelAuthor } from "@/interface/novel";
+import ApiResponse from "@/interface/response";
 import Infomation from "@/interface/infomation";
-import Novel from "@/interface/novel";
 import Link from "next/link";
 
 const kaisei_decol = Kaisei_Decol({ weight: "400", subsets: ["latin"] });
+
+function convertToTimestamp(dateString: string): number {
+  return new Date(dateString).getTime();
+}
 
 export default function Home() {
   const [infomations, setInfomations] = useState<Infomation[]>([
     { title: "開発を開始しました", created_at: "2025-2/16" }
   ]);
+  const [newNovels, setNovels] = useState<Novel[]>([]);
 
-  const [newNovels, setNovels] = useState<Novel[]>([
-    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: 14556, updated_at: "2025-2/17" },
-    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: 14556, updated_at: "2025-2/17" },
-    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: 14556, updated_at: "2025-2/17" },
-    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: 14556, updated_at: "2025-2/17" },
-    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: 14556, updated_at: "2025-2/17" },
-    { slug: 'example', title: "転生したらスライムだった件", phrase: "異世界転生ファンタジー", point: 14556, updated_at: "2025-2/17" }
-  ]);
+  useEffect(() => {
+    const getNovels = async () => {
+      const response: Response = await fetch(`/api/v3/works`);
+      const data: ApiResponse = await response.json();
+
+      if (data.success) {
+        const novelsResult: NovelResult[] = data.body;
+        const publicNovels: NovelResult[] = novelsResult.filter((novel: NovelResult) => 
+          novel.work.type == "long" ? novel.isPublic : novel.work.is_public).sort(
+            (a: NovelResult, b: NovelResult) => 
+              convertToTimestamp(b.work.updated_at ?? "") - convertToTimestamp(a.work.updated_at ?? ""));
+
+        setNovels(publicNovels.map((novel: NovelResult) => novel.work));
+      }
+    };
+
+    getNovels();
+  }, []);
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -32,7 +48,6 @@ export default function Home() {
           </div>
           <div>
             {infomations.map((infomation, index) => (
-              
               <div key={`info-${index}`} className="flex items-center py-2 border-b">
                 <div className="bg-amber-100 text-sm px-4 py-1 rounded font-medium">
                   {infomation.created_at}
@@ -62,7 +77,7 @@ export default function Home() {
                     { novel.phrase }
                   </div>
                   <div className="text-sm font-medium text-gray-500">
-                    評価ポイント: <span className="font-bold text-orange-500">{ novel.point }</span>
+                    評価ポイント: <span className="font-bold text-orange-500">{ novel.point.toLocaleString("en-US") }</span>
                   </div>
                   <div className="text-xs text-gray-400 mt-2">
                     最終更新: { novel.updated_at }

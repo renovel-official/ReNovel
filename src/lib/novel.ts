@@ -2,6 +2,7 @@
 
 import { getEpisodesFromNovel, getNovelAllViwes } from "./episode";
 import { NovelAuthor, NovelResult } from "@/interface/novel";
+import { getFormattedDate, getNowDateNumber } from "./date";
 import { NovelGenreList } from "@/types/genre";
 
 import supabaseClient from "@/lib/supabase";
@@ -68,8 +69,8 @@ const getNovelFromId = (async (workId: string): Promise<NovelResult | null> => {
         const view = await getNovelAllViwes(workId) ?? 0;
         
         const episodes = await getEpisodesFromNovel(workId) ?? [];
-        const now = Math.floor(Date.now() / 1000);
-        const isPublic = episodes.find((episode: Episode) => episode.public_date >= now) ? true : false;
+        const now = await getNowDateNumber();
+        const isPublic = episodes.find((episode: Episode) => episode.public_date && episode.public_date <= now) ? true : false;
 
         if (authorData) {
             return {
@@ -158,7 +159,24 @@ const isAuthor = (async (workId: string, email?: string | undefined | false): Pr
     }
 
     return false;
-})
+});
+
+const updateLastUpdateDate = (async (workId: string): Promise<boolean> => {
+    const novel: NovelResult | null = await getNovelFromId(workId);
+
+    if (novel) {
+        const updated_at = await getFormattedDate();
+
+        const { error } = await supabaseClient
+            .from('novels')
+            .update({ updated_at })
+            .eq('slug', workId);
+
+        return error ? false : true;
+    }
+
+    return false;
+});
 
 export {
     isAuthor,
@@ -168,4 +186,5 @@ export {
     getNovelsFromGenre,
     getNovelsFromQuery,
     getNovelsFromAuthor,
+    updateLastUpdateDate
 };

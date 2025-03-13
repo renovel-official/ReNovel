@@ -24,7 +24,7 @@ export default function Novels(): ReactElement {
             const data: ApiResponse = await response.json();
 
             if (data.success) {
-                const novels = (data.body as NovelResult[]).sort((a, b) => (b.view ?? 0) - (a.view ?? 0))
+                const novels = (data.body as NovelResult[]).sort((a, b) => (b.work.point ?? 0) - (a.work.point ?? 0))
                 setNovels(novels);
             } else {
                 toast.error("小説の取得に失敗しました");

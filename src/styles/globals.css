@@ -64,7 +64,6 @@
 
 .custom-text {
     font-family: "myfont";
-    font-size: 100%;
     font: bold;
     -ms-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%
@@ -72,7 +71,6 @@
 
 .custom-text2 {
     font-family: "myfont2";
-    font-size: 100%;
     font: bold;
     -ms-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%

@@ -1,5 +1,6 @@
-export default async function textToHtmlConvert(text: string): Promise<string> {
-    const lines: string[] = text.split('\n');
+export function textToHtmlConvert(text: string): string {
+    // 連続する改行を一つの改行に変換
+    const lines: string[] = text.split(/\n/);
     let html: string = '';
 
     lines.forEach((line: string, index: number) => {
@@ -15,7 +16,7 @@ export default async function textToHtmlConvert(text: string): Promise<string> {
             return p1.split('').map((char: string) => `<ruby>${char}<rt>・</rt></ruby>`).join('');
         });
 
-        html += `<p id="p${index + 1}">${processedLine}</p>`;
+        html += `<p id="p${index + 1}">${processedLine}</p> ${line == "" ? "<br>" : ""}`;
     });
 
     return html;

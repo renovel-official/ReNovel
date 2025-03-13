@@ -175,7 +175,7 @@ export async function PATCH(req: Request, context: ReqContext): Promise<Response
 
             const { error } = await supabaseClient
                 .from('novels')
-                .update({ text })
+                .update({ text, updated_at: await getFormattedDate() })
                 .eq('slug', workId);
 
 

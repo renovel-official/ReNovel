@@ -63,15 +63,6 @@ const EpisodeControl = ({ open, episodes, episodesRef, publicDateRef, onToPrivat
                         <Button className='mt-2 w-full hover:bg-red-100' onClick={() => onDelete()}>削除</Button>
                     </div>
                 </div>
-
-                <div className="flex mt-5 w-full justify-center">
-                    <button
-                        className="bg-red-400 hover:bg-red-500 rounded border text-white px-4 py-2 ml-1"
-                        onClick={() => onCancel()}
-                    >
-                        閉じる
-                    </button>
-                </div>
             </div>
         </>
     ) : (

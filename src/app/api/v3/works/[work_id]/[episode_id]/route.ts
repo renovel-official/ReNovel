@@ -1,9 +1,9 @@
 'use server';
 
+import { getNovelFromId, updateLastUpdateDate } from "@/lib/novel";
 import { getFormattedDate, getNowDateNumber } from "@/lib/date";
 import Novel, { NovelResult, NovelAuthor } from "@/interface/novel";
 import { getEpisodeFromId } from "@/lib/episode";
-import { getNovelFromId } from "@/lib/novel";
 import { isAuthor } from "@/lib/novel";
 
 import supabaseClient from "@/lib/supabase";
@@ -54,10 +54,11 @@ export async function POST(req: Request, context: ReqContext) { // 小説を公�
                 const { date } = await req.json();
                 const nowTime = await getNowDateNumber();
 
-                if (typeof(date) == "number" && nowTime <= date) {
+                await updateLastUpdateDate(workId);
+                if (typeof(date) == "number" && nowTime < date) {
                     const { error } = await supabaseClient
                         .from('episodes')
-                        .update({ public_date: date })
+                        .update({ public_date: date, updated_at: await getFormattedDate() })
                         .eq('novel_id', workId)
                         .eq('slug', episodeId);
 
@@ -117,13 +118,13 @@ export async function PUT(req: Request, context: ReqContext) {  // 小説の内�
             const { title, text } = await req.json();
             const updated_at = await getFormattedDate();
 
+            await updateLastUpdateDate(workId);
+
             const { error } = await supabaseClient
                 .from('episodes')
                 .update({ title, text, updated_at })
                 .eq('novel_id', workId)
                 .eq('slug', episodeId);
-
-            console.log(error);
 
 
             if (!error) return apiResponse(
