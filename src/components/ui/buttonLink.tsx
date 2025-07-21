@@ -13,7 +13,7 @@ interface ButtonProps {
 export default function ButtonLink({ children, href, className, onClick, ...props }: ButtonProps): ReactElement<HTMLButtonElement> {
     return (
         <Link href={href}>
-            <div className={`text-center border rounded px-3 py-2 ${className}`} onClick={() => { onClick ?? function (){} (); }}  { ...props }>
+            <div className={`text-center border rounded px-3 py-2 ${className}`} onClick={() => { (onClick ?? function (){})(); }}  { ...props }>
                 { children }
             </div>
         </Link>

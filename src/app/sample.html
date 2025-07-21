@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReNovel - 小説投稿サイト</title>
+    <meta property="og:title" content="ReNovel - 小説投稿サイト">
+    <meta property="og:description" content="あなたの小説を世界に発信しよう">
+    <meta property="og:image" content="/renovel-logo.png">
+    <meta property="og:type" content="website">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="/renovel-logo.png" type="image/png">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header (Fixed) -->
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm h-16 z-50">
+        <div class="container mx-auto px-4 h-full flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="h-8 w-8 mr-2">
+                    <img src="/renovel-logo.png" alt="ReNovel Logo" class="h-full w-auto">
+                </div>
+                <h1 class="text-xl font-bold">ReNovel</h1>
+            </div>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="#" class="text-gray-700 hover:text-gray-900">ホーム</a></li>
+                    <li><a href="#" class="text-gray-700 hover:text-gray-900">新着作品</a></li>
+                    <li><a href="#" class="text-gray-700 hover:text-gray-900">ランキング</a></li>
+                    <li><a href="#" class="text-gray-700 hover:text-gray-900">投稿する</a></li>
+                </ul>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <button class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md text-sm">ログイン</button>
+                <button class="bg-gray-800 text-white hover:bg-gray-700 px-4 py-2 rounded-md text-sm">新規登録</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <div class="flex pt-16">
+        <!-- Fixed Sidebar (1/5 width) -->
+        <aside class="fixed w-1/5 bg-white h-screen border-r border-gray-200 overflow-y-auto">
+            <div class="px-4 py-4">
+                <h2 class="text-lg font-semibold mb-4">カテゴリー</h2>
+                <ul class="space-y-2">
+                    <li><a href="#" class="block py-2 px-3 rounded hover:bg-gray-100">ファンタジー</a></li>
+                    <li><a href="#" class="block py-2 px-3 rounded hover:bg-gray-100">SF</a></li>
+                    <li><a href="#" class="block py-2 px-3 rounded hover:bg-gray-100">恋愛</a></li>
+                    <li><a href="#" class="block py-2 px-3 rounded hover:bg-gray-100">ミステリー</a></li>
+                    <li><a href="#" class="block py-2 px-3 rounded hover:bg-gray-100">歴史</a></li>
+                    <li><a href="#" class="block py-2 px-3 rounded hover:bg-gray-100">ホラー</a></li>
+                    <li><a href="#" class="block py-2 px-3 rounded hover:bg-gray-100">コメディ</a></li>
+                </ul>
+            </div>
+            
+            <div class="mt-8 px-4">
+                <h2 class="text-lg font-semibold mb-4">人気タグ</h2>
+                <div class="flex flex-wrap gap-2">
+                    <a href="#" class="text-sm bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded">#異世界転生</a>
+                    <a href="#" class="text-sm bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded">#ファンタジー</a>
+                    <a href="#" class="text-sm bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded">#青春</a>
+                    <a href="#" class="text-sm bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded">#恋愛</a>
+                    <a href="#" class="text-sm bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded">#推理</a>
+                    <a href="#" class="text-sm bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded">#SF</a>
+                    <a href="#" class="text-sm bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded">#冒険</a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content (4/5 width, offset by sidebar width) -->
+        <main class="ml-1/5 w-4/5 p-6">
+            <!-- Hero Section -->
+            <section class="mb-8">
+                <div class="bg-white shadow-sm rounded-lg p-6">
+                    <h2 class="text-2xl font-bold mb-4">ReNovelへようこそ</h2>
+                    <p class="text-gray-600 mb-6">あなたの物語を世界に共有しましょう。小説を投稿して、読者からのフィードバックを受け取りましょう。</p>
+                    <button class="bg-gray-800 text-white hover:bg-gray-700 px-6 py-2 rounded-md">小説を投稿する</button>
+                </div>
+            </section>
+
+            <!-- Featured Novels -->
+            <section class="mb-8">
+                <h2 class="text-xl font-bold mb-4">おすすめ作品</h2>
+                <div class="grid grid-cols-3 gap-4">
+                    <!-- Novel Card 1 -->
+                    <div class="bg-white shadow-sm rounded-lg p-4">
+                        <h3 class="font-bold text-lg mb-2">異世界で魔法使いになった件について</h3>
+                        <p class="text-sm text-gray-600 mb-3">作者: 小説太郎</p>
+                        <div class="text-sm text-gray-700 mb-3 line-clamp-3">
+                            普通の高校生だった主人公が、ある日突然異世界に転移してしまう。そこで彼は自分に魔法の才能があることを知り、魔法使いとしての新たな人生を歩み始める。
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500">ファンタジー</span>
+                            <div class="flex items-center text-gray-500">
+                                <span class="mr-2">★ 4.8</span>
+                                <span>12,345 閲覧</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Novel Card 2 -->
+                    <div class="bg-white shadow-sm rounded-lg p-4">
+                        <h3 class="font-bold text-lg mb-2">月夜の約束</h3>
+                        <p class="text-sm text-gray-600 mb-3">作者: 文学花子</p>
+                        <div class="text-sm text-gray-700 mb-3 line-clamp-3">
+                            幼い頃に交わした約束を胸に、運命に翻弄される二人の若者の物語。十年ぶりに再会した二人の間に芽生える感情とは。
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500">恋愛</span>
+                            <div class="flex items-center text-gray-500">
+                                <span class="mr-2">★ 4.5</span>
+                                <span>9,876 閲覧</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Novel Card 3 -->
+                    <div class="bg-white shadow-sm rounded-lg p-4">
+                        <h3 class="font-bold text-lg mb-2">探偵の帰還</h3>
+                        <p class="text-sm text-gray-600 mb-3">作者: ミステリー次郎</p>
+                        <div class="text-sm text-gray-700 mb-3 line-clamp-3">
+                            引退した名探偵が、最後の事件に挑む。連続殺人事件の裏に隠された真実と、探偵自身の過去との関連とは。
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500">ミステリー</span>
+                            <div class="flex items-center text-gray-500">
+                                <span class="mr-2">★ 4.7</span>
+                                <span>8,765 閲覧</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Latest Novels -->
+            <section class="mb-8">
+                <h2 class="text-xl font-bold mb-4">新着作品</h2>
+                <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="text-left p-4">タイトル</th>
+                                <th class="text-left p-4">作者</th>
+                                <th class="text-left p-4">ジャンル</th>
+                                <th class="text-left p-4">投稿日</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-200">
+                                <td class="p-4">星空のキャンバス</td>
+                                <td class="p-4">夢見る作家</td>
+                                <td class="p-4">ファンタジー</td>
+                                <td class="p-4">2025/03/29</td>
+                            </tr>
+                            <tr class="border-b border-gray-200">
+                                <td class="p-4">時を越える想い</td>
+                                <td class="p-4">時間旅行者</td>
+                                <td class="p-4">SF</td>
+                                <td class="p-4">2025/03/28</td>
+                            </tr>
+                            <tr class="border-b border-gray-200">
+                                <td class="p-4">謎の古書店</td>
+                                <td class="p-4">本の魔術師</td>
+                                <td class="p-4">ミステリー</td>
+                                <td class="p-4">2025/03/28</td>
+                            </tr>
+                            <tr class="border-b border-gray-200">
+                                <td class="p-4">桜舞う季節に</td>
+                                <td class="p-4">春の詩人</td>
+                                <td class="p-4">恋愛</td>
+                                <td class="p-4">2025/03/27</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4">戦国武将の末裔</td>
+                                <td class="p-4">歴史探究家</td>
+                                <td class="p-4">歴史</td>
+                                <td class="p-4">2025/03/27</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center mt-4">
+                    <a href="#" class="text-gray-600 hover:text-gray-900">もっと見る →</a>
+                </div>
+            </section>
+
+            <!-- Rankings -->
+            <section class="mb-8">
+                <h2 class="text-xl font-bold mb-4">人気ランキング</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Weekly Ranking -->
+                    <div class="bg-white shadow-sm rounded-lg p-4">
+                        <h3 class="font-bold mb-3 border-b pb-2">週間ランキング</h3>
+                        <ol class="space-y-2">
+                            <li class="flex items-center p-2 hover:bg-gray-50">
+                                <span class="font-bold text-lg mr-3">1</span>
+                                <div>
+                                    <h4 class="font-medium">光と影の境界線</h4>
+                                    <p class="text-sm text-gray-600">ファンタジー / 星見太郎</p>
+                                </div>
+                            </li>
+                            <li class="flex items-center p-2 hover:bg-gray-50">
+                                <span class="font-bold text-lg mr-3">2</span>
+                                <div>
+                                    <h4 class="font-medium">君と出会った夏</h4>
+                                    <p class="text-sm text-gray-600">恋愛 / 夏空花子</p>
+                                </div>
+                            </li>
+                            <li class="flex items-center p-2 hover:bg-gray-50">
+                                <span class="font-bold text-lg mr-3">3</span>
+                                <div>
+                                    <h4 class="font-medium">未来都市の謎</h4>
+                                    <p class="text-sm text-gray-600">SF / テクノ作家</p>
+                                </div>
+                            </li>
+                        </ol>
+                    </div>
+                    
+                    <!-- Monthly Ranking -->
+                    <div class="bg-white shadow-sm rounded-lg p-4">
+                        <h3 class="font-bold mb-3 border-b pb-2">月間ランキング</h3>
+                        <ol class="space-y-2">
+                            <li class="flex items-center p-2 hover:bg-gray-50">
+                                <span class="font-bold text-lg mr-3">1</span>
+                                <div>
+                                    <h4 class="font-medium">永遠の剣</h4>
+                                    <p class="text-sm text-gray-600">ファンタジー / 英雄伝説</p>
+                                </div>
+                            </li>
+                            <li class="flex items-center p-2 hover:bg-gray-50">
+                                <span class="font-bold text-lg mr-3">2</span>
+                                <div>
+                                    <h4 class="font-medium">氷の迷宮</h4>
+                                    <p class="text-sm text-gray-600">ミステリー / 謎解き名人</p>
+                                </div>
+                            </li>
+                            <li class="flex items-center p-2 hover:bg-gray-50">
+                                <span class="font-bold text-lg mr-3">3</span>
+                                <div>
+                                    <h4 class="font-medium">桜の花びらが舞うとき</h4>
+                                    <p class="text-sm text-gray-600">恋愛 / ロマンス作家</p>
+                                </div>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <style>
+    /* Tailwindで1/5のマージンが効かない問題を解決するためのカスタムCSS */
+    .w-1\/5 {
+        width: 20%;
+    }
+    .w-4\/5 {
+        width: 80%;
+    }
+    .ml-1\/5 {
+        margin-left: 20%;
+    }
+    /* 行数制限のためのスタイル */
+    .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    </style>
+</body>
+</html>

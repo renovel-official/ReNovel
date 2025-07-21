@@ -85,6 +85,7 @@ export async function POST(req: Request): Promise<Response> {
                     created_at: await getFormattedDate('YYYY/MM/DD HH:mm:ss')
                 });
             
+            console.log(error);
 
             return error ? false : true;
         })(novelId, data);
@@ -105,6 +106,8 @@ export async function POST(req: Request): Promise<Response> {
                             is_admin: true
                         }
                     ]);
+
+                console.log(error);
 
                 return error ? false : true;
             })(novelId, login);
